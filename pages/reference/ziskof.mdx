@@ -1,0 +1,26 @@
+# Ziskof
+
+## Overview
+
+Ziskof tests generate riscof test files, convert the corresponding `.elf` files into ZisK ROMs, and execute them providing the output in stdout for comparison against a reference RISCV implementation. This process is not trivial and has been semi-automatized.
+
+## Running Ziskof Tests
+
+### Step 1: Compile the ZisK Emulator
+
+First, compile the ZisK Emulator:
+
+```bash
+cargo clean
+cargo build --release
+```
+
+### Step 2: Run Docker Tests
+
+Download and run a Docker image from the riscof repository to generate and run the riscof tests:
+
+```bash
+docker run --rm -v ./target/release/ziskemu:/program -v ./riscof/:/workspace/output/ -ti hermeznetwork/ziskof:latest
+```
+
+The test can take a few minutes to complete. Any error would be displayed in red.

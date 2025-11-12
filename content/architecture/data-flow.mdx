@@ -1,0 +1,73 @@
+# Data Flow
+
+Understanding how data moves through the ZisK system.
+
+## Request Flow
+
+1. **Client Request** - HTTP request arrives at the server
+2. **API Gateway** - Request is received and validated
+3. **Routing** - Request is routed to the appropriate handler
+4. **Middleware** - Middleware functions are executed
+5. **Handler** - Request handler processes the request
+6. **Response** - Response is generated and sent back
+
+## Response Flow
+
+1. **Handler Execution** - Handler generates response data
+2. **Transformation** - Data is transformed if needed
+3. **Serialization** - Data is serialized to JSON/other format
+4. **Middleware** - Response middleware is executed
+5. **Client** - Response is sent to the client
+
+## Data Processing Pipeline
+
+```
+Request → Validation → Transformation → Processing → Response
+```
+
+### Validation
+
+All incoming data is validated against schemas:
+
+```typescript
+const schema = {
+  name: String,
+  age: Number,
+}
+
+const validated = validate(data, schema)
+```
+
+### Transformation
+
+Data is transformed to match internal formats:
+
+```typescript
+const transformed = transform(data, {
+  name: (value) => value.trim(),
+  age: (value) => parseInt(value),
+})
+```
+
+### Processing
+
+Business logic is applied:
+
+```typescript
+const result = await processData(transformed)
+```
+
+## Caching Flow
+
+1. **Cache Check** - Check if data exists in cache
+2. **Cache Hit** - Return cached data if available
+3. **Cache Miss** - Fetch from source and cache result
+4. **Cache Update** - Update cache with new data
+
+## Error Flow
+
+1. **Error Occurrence** - Error is thrown during processing
+2. **Error Capture** - Error is captured by error handler
+3. **Error Transformation** - Error is transformed to user-friendly format
+4. **Error Response** - Error response is sent to client
+

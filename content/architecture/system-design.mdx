@@ -1,0 +1,96 @@
+# System Design
+
+An overview of the ZisK system architecture and design patterns.
+
+## High-Level Architecture
+
+```
+┌─────────────────┐
+│   Client Layer  │
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│   API Gateway   │
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Core Engine    │
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Plugin System  │
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Data Layer     │
+└─────────────────┘
+```
+
+## Core Components
+
+### API Gateway
+
+The API Gateway handles all incoming requests and routes them to appropriate handlers.
+
+### Core Engine
+
+The Core Engine is the heart of ZisK, managing:
+
+- Request processing
+- Response generation
+- Middleware execution
+- Plugin lifecycle
+
+### Plugin System
+
+The Plugin System allows for extensibility:
+
+- Dynamic plugin loading
+- Plugin dependencies
+- Lifecycle management
+
+### Data Layer
+
+The Data Layer handles:
+
+- Data persistence
+- Caching
+- Query optimization
+
+## Design Patterns
+
+### Singleton Pattern
+
+The Core Engine uses a singleton pattern to ensure a single instance:
+
+```typescript
+class CoreEngine {
+  private static instance: CoreEngine
+  
+  static getInstance(): CoreEngine {
+    if (!CoreEngine.instance) {
+      CoreEngine.instance = new CoreEngine()
+    }
+    return CoreEngine.instance
+  }
+}
+```
+
+### Observer Pattern
+
+Events are handled using the observer pattern:
+
+```typescript
+app.on('request', (req) => {
+  // Handle request event
+})
+```
+
+### Factory Pattern
+
+Plugins are created using a factory pattern:
+
+```typescript
+const plugin = PluginFactory.create('my-plugin', options)
+```
+

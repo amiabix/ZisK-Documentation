@@ -1,0 +1,79 @@
+# Advanced Topics
+
+Explore advanced features and patterns in ZisK.
+
+## Custom Middleware
+
+Create custom middleware to extend functionality:
+
+```typescript
+import { Middleware } from 'zisk'
+
+const customMiddleware: Middleware = async (req, res, next) => {
+  // Your custom logic here
+  console.log('Request:', req.url)
+  await next()
+}
+
+app.use(customMiddleware)
+```
+
+## Plugin System
+
+ZisK supports a plugin architecture:
+
+```typescript
+import { Plugin } from 'zisk'
+
+const myPlugin: Plugin = {
+  name: 'my-plugin',
+  setup(app) {
+    // Plugin initialization
+    app.on('ready', () => {
+      console.log('Plugin loaded')
+    })
+  },
+}
+
+app.use(myPlugin)
+```
+
+## Performance Optimization
+
+### Caching
+
+Enable caching for better performance:
+
+```typescript
+const config: ZisKConfig = {
+  caching: {
+    enabled: true,
+    ttl: 3600, // 1 hour
+  },
+}
+```
+
+### Compression
+
+Enable response compression:
+
+```typescript
+const config: ZisKConfig = {
+  compression: {
+    enabled: true,
+    level: 6,
+  },
+}
+```
+
+## Error Handling
+
+Implement custom error handling:
+
+```typescript
+app.onError((error, req, res) => {
+  console.error('Error:', error)
+  res.status(500).json({ error: 'Internal Server Error' })
+})
+```
+

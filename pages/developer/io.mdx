@@ -1,0 +1,111 @@
+# I/O Model
+
+ZisK uses a deterministic input/output model where all inputs are provided via a single binary file, and outputs are explicitly published through a controlled interface.
+
+---
+
+## Privacy Model
+
+All inputs, intermediate values, and computations remain private unless explicitly published with `set_output()`, Only values passed to `set_output()` become public and are included in proofs and `publics.json`; **everything else remains private**.
+
+
+## Input
+
+### Input Preparation
+
+Input preparation happens outside ZisK (e.g., in `build.rs`). Write raw data bytes to your input file:
+
+```rust
+// build.rs
+let secret_value: u64 = 42;
+std::fs::write("input.bin", secret_value.to_le_bytes())?;
+```
+
+You can fetch external data, process user input, or query databases, then write them as the snapshot.
+
+### Input File Format
+
+All program inputs are provided through a static binary file (commonly named `input.bin`, but you can use any filename). The file contains raw data bytes (up to 128MB).
+
+### Reading Input
+
+Use `ziskos::read_input()` to load input data. The function returns a `Vec<u8>` containing the data bytes from your input file:
+
+```rust
+use ziskos::read_input;
+
+let input: Vec<u8> = read_input();
+// Example: reading a u64 value
+let value = u64::from_le_bytes(input[0..8].try_into().unwrap());
+```
+
+For complex data structures, serialize in `build.rs` and deserialize in your program:
+
+```rust
+// build.rs
+let data = MyStruct { field: 42 };
+let encoded = bincode::serialize(&data)?;
+std::fs::write("input.bin", encoded)?; // or any filename you choose
+
+// main.rs
+let input = read_input();
+let data: MyStruct = bincode::deserialize(&input)?;
+```
+
+---
+
+## Output
+
+### Output Structure
+
+Outputs are organized as:
+- **Output count (u32)**: Tracks how many outputs have been set
+- **64 output slots**: Each slot holds one u32 value
+
+Maximum 64 outputs (indices 0-63).
+
+### Publishing Public Values
+
+`ziskos::set_output()` is the only way to make data public. Everything else remains private.
+
+**Signature:**
+```rust
+fn set_output(index: usize, value: u32)
+```
+
+**Parameters:**
+- `index`: Output slot (0-63)
+- `value`: 32-bit unsigned integer
+
+**Example:**
+```rust
+use ziskos::set_output;
+
+let result = secret_value * 10; // Private
+set_output(0, result as u32);   // Public
+```
+
+### Publishing Complex Data
+
+Since `set_output()` only accepts `u32`, split larger values into 32-bit chunks:
+
+```rust
+// Publishing a 256-bit hash (8 x 32-bit chunks)
+for i in 0..8 {
+    let val = byteorder::BigEndian::read_u32(&hash[i * 4..i * 4 + 4]);
+    set_output(i, val);
+}
+```
+
+---
+
+## Working with Dynamic Data
+
+ZisK requires static input snapshots, but you can handle dynamic data by:
+
+- **Build-time fetching**: Fetch fresh data using `build.rs` before compilation
+- **External staging**: Maintain rolling snapshot files consumed at proof time
+- **Batching**: Accumulate data in fixed intervals, snapshotting each batch
+- **Event-driven builds**: Trigger re-compilation when data sources change
+
+The variability moves to the snapshot preparation layer. Once your input file is prepared, execution inside ZisK remains deterministic and verifiable.

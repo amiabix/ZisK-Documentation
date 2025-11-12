@@ -1,0 +1,136 @@
+# Type Definitions
+
+Complete TypeScript type definitions for ZisK.
+
+## Core Types
+
+### ZisKConfig
+
+```typescript
+interface ZisKConfig {
+  port?: number
+  host?: string
+  environment?: 'development' | 'production' | 'test'
+  features?: {
+    caching?: boolean
+    logging?: boolean
+  }
+}
+```
+
+Configuration interface for ZisK.
+
+### Request
+
+```typescript
+interface Request {
+  method: string
+  url: string
+  headers: Record<string, string>
+  body?: any
+  params?: Record<string, string>
+  query?: Record<string, string>
+}
+```
+
+HTTP request interface.
+
+### Response
+
+```typescript
+interface Response {
+  status(code: number): Response
+  json(data: any): void
+  send(data: any): void
+  header(name: string, value: string): Response
+}
+```
+
+HTTP response interface.
+
+### Handler
+
+```typescript
+type Handler = (req: Request, res: Response) => Promise<void> | void
+```
+
+Request handler function type.
+
+### Middleware
+
+```typescript
+type Middleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void> | void
+```
+
+Middleware function type.
+
+### NextFunction
+
+```typescript
+type NextFunction = () => Promise<void> | void
+```
+
+Next function type for middleware.
+
+## Plugin Types
+
+### Plugin
+
+```typescript
+interface Plugin {
+  name: string
+  version?: string
+  setup(app: ZisK): void | Promise<void>
+  teardown?(app: ZisK): void | Promise<void>
+}
+```
+
+Plugin interface.
+
+### PluginOptions
+
+```typescript
+interface PluginOptions {
+  enabled?: boolean
+  config?: Record<string, any>
+}
+```
+
+Plugin options interface.
+
+## Utility Types
+
+### Partial
+
+```typescript
+type Partial<T> = {
+  [P in keyof T]?: T[P]
+}
+```
+
+Makes all properties optional.
+
+### Required
+
+```typescript
+type Required<T> = {
+  [P in keyof T]-?: T[P]
+}
+```
+
+Makes all properties required.
+
+### Pick
+
+```typescript
+type Pick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+```
+
+Selects specific properties.
+

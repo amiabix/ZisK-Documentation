@@ -1,0 +1,613 @@
+@import url('https://rsms.me/inter/inter.css');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand Colors - Neutrals */
+    --brand-black: #0C0C0C;
+    --brand-dark-blue: #1A1A24;
+    --brand-midnight: #2D2E3D;
+    --brand-gray-dark: #363636;
+    --brand-gray: #606060;
+    --brand-gray-light: #8E8E8A;
+    --brand-silver-dark: #B8B8B4;
+    --brand-silver: #E7E7E3;
+    --brand-silver-light: #F3F3F2;
+    
+    /* Brand Colors - Greens */
+    --brand-victorian-peak: #007755;
+    --brand-soft-green: #0ABF83; /* Primary interactive color */
+    --brand-light-green: #A4F6D0;
+    --brand-background-green: #EBFEF5;
+    
+    /* Brand Colors - Accents */
+    --brand-busy-bee: #F4FF00;
+    
+    /* Typography */
+    --line-height-base: 1.7;
+    --line-height-heading: 1.3;
+    --letter-spacing-tight: -0.015em;
+    
+    /* Nextra primary color - using Victorian Peak */
+    --nextra-primary-hue: 160deg;
+    --nextra-primary-saturation: 100%;
+    --nextra-primary-lightness: 25%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  body {
+    @apply antialiased;
+    line-height: var(--line-height-base);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Heading Hierarchy - Inter font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    line-height: var(--line-height-heading);
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    letter-spacing: var(--letter-spacing-tight);
+    font-weight: 600;
+  }
+
+  /* Strong/Bold text - IBM Plex Sans */
+  strong, b, .highlight {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+  }
+
+  /* Code - IBM Plex Mono */
+  code, pre {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.875rem;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  /* Section Spacing */
+  p {
+    margin-bottom: 1em;
+  }
+
+  hr {
+    margin: 2em 0;
+    border: none;
+    border-top: 1px solid;
+  }
+
+  /* Base link colors - use gray, Victorian Peak on hover only */
+  a {
+    color: var(--brand-gray);
+    @apply transition-colors duration-200;
+  }
+
+  a:hover {
+    color: var(--brand-victorian-peak);
+  }
+}
+
+@layer components {
+  /* Custom spacing for content */
+  .nextra-content {
+    max-width: 48rem;
+    padding: 0 1rem;
+  }
+
+  article, main {
+    max-width: 48rem;
+    padding: 0 1rem;
+  }
+
+  /* Inline Code Styling */
+  code:not(pre code) {
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-weight: 500;
+  }
+
+  /* Code Block Enhancements */
+  .nextra-code-block {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1.5em 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    position: relative;
+    overflow: visible;
+  }
+
+  .nextra-code-block pre {
+    margin: 0;
+    padding: 0;
+    padding-right: 4rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    position: relative;
+    max-width: 100%;
+  }
+
+  /* Copy Button Styling */
+  pre {
+    position: relative;
+    padding-right: 4rem;
+  }
+
+  .nextra-code-block .copy-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.5rem;
+    background-color: transparent;
+    border: 1px solid;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s, border-color 0.2s;
+    z-index: 30;
+    min-width: 2rem;
+    min-height: 2rem;
+    pointer-events: auto;
+    margin: 0;
+  }
+
+  pre .copy-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.5rem;
+    background-color: transparent;
+    border: 1px solid;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s, border-color 0.2s;
+    z-index: 20;
+    min-width: 2rem;
+    min-height: 2rem;
+    pointer-events: auto;
+  }
+
+  .nextra-code-block:hover .copy-button,
+  pre:hover .copy-button {
+    opacity: 1;
+  }
+
+  .copy-button:hover {
+    opacity: 1 !important;
+  }
+
+  .copy-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* List Formatting */
+  ul, ol {
+    margin-bottom: 1.25em;
+    padding-left: 2em;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+  }
+
+  li > ul, li > ol {
+    margin-bottom: 0;
+    margin-top: 0.5em;
+  }
+
+  ul ul, ol ol, ul ol, ol ul {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  /* Table Formatting */
+  table {
+    margin: 1.5em 0;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75em 1em;
+    border-bottom: 2px solid;
+  }
+
+  td {
+    padding: 0.75em 1em;
+    border-bottom: 1px solid;
+  }
+
+  /* Callout/Blockquote Styling */
+  blockquote {
+    border-left: 4px solid;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 0.375rem;
+  }
+
+  /* Callout classes */
+  .callout {
+    border-left: 4px solid;
+    padding: 1rem;
+    margin: 1.5em 0;
+    border-radius: 0.375rem;
+  }
+
+  /* Heading Anchor Links - removed for minimal design */
+  h1, h2, h3, h4, h5, h6 {
+    position: relative;
+  }
+
+  h2::before, h3::before, h4::before {
+    display: none;
+  }
+
+  /* Content links */
+  .nextra-content a,
+  article a,
+  main a {
+    color: var(--brand-gray);
+  }
+
+  .nextra-content a:hover,
+  article a:hover,
+  main a:hover {
+    color: var(--brand-victorian-peak);
+  }
+}
+
+/* Light theme navigation - use Dark Gray */
+html.light .nextra-menu-desktop a,
+html.light .nextra-menu-mobile a,
+html.light [class*="nextra-menu"] a,
+html.light [class*="menu"] a,
+html.light .nextra-sidebar a,
+html.light [class*="sidebar"] a,
+html.light nav a {
+  color: var(--brand-gray) !important;
+}
+
+html.light .nextra-menu-desktop a:hover,
+html.light .nextra-menu-mobile a:hover,
+html.light [class*="nextra-menu"] a:hover,
+html.light [class*="menu"] a:hover,
+html.light .nextra-sidebar a:hover,
+html.light [class*="sidebar"] a:hover,
+html.light nav a:hover {
+  color: var(--brand-victorian-peak) !important;
+}
+
+html.light .nextra-menu-desktop a.active,
+html.light .nextra-menu-mobile a.active,
+html.light [class*="nextra-menu"] a.active,
+html.light [class*="menu"] a.active,
+html.light li[class*="active"] > a,
+html.light [aria-current="page"],
+html.light li[class*="active"],
+html.light [class*="active"] {
+  color: var(--brand-gray) !important;
+  background-color: transparent !important;
+}
+
+/* Dark theme navigation - use Dark Gray */
+html.dark .nextra-menu-desktop a,
+html.dark .nextra-menu-mobile a,
+html.dark [class*="nextra-menu"] a,
+html.dark [class*="menu"] a,
+html.dark .nextra-sidebar a,
+html.dark [class*="sidebar"] a,
+html.dark nav a {
+  color: var(--brand-gray) !important;
+}
+
+html.dark .nextra-menu-desktop a:hover,
+html.dark .nextra-menu-mobile a:hover,
+html.dark [class*="nextra-menu"] a:hover,
+html.dark [class*="menu"] a:hover,
+html.dark .nextra-sidebar a:hover,
+html.dark [class*="sidebar"] a:hover,
+html.dark nav a:hover {
+  color: var(--brand-victorian-peak) !important;
+}
+
+html.dark .nextra-menu-desktop a.active,
+html.dark .nextra-menu-mobile a.active,
+html.dark [class*="nextra-menu"] a.active,
+html.dark [class*="menu"] a.active,
+html.dark li[class*="active"] > a,
+html.dark [aria-current="page"],
+html.dark li[class*="active"],
+html.dark [class*="active"] {
+  color: var(--brand-gray) !important;
+  background-color: transparent !important;
+}
+
+/* Inline Code Theme Colors */
+html.light code:not(pre code) {
+  background-color: var(--brand-silver-light);
+  color: var(--brand-black);
+}
+
+html.dark code:not(pre code) {
+  background-color: var(--brand-gray-dark);
+  color: var(--brand-silver-light);
+}
+
+/* Table Theme Colors */
+html.light th, html.light td {
+  border-color: var(--brand-gray-light);
+}
+
+html.light th {
+  background-color: var(--brand-silver-light);
+  color: var(--brand-black);
+}
+
+html.dark th, html.dark td {
+  border-color: var(--brand-gray-dark);
+}
+
+html.dark th {
+  background-color: var(--brand-midnight);
+  color: var(--brand-silver-light);
+}
+
+/* Alternating row colors for readability - neutral grays */
+html.light tbody tr:nth-child(even) {
+  background-color: var(--brand-silver-light);
+}
+
+html.dark tbody tr:nth-child(even) {
+  background-color: var(--brand-midnight);
+}
+
+/* Blockquote Theme Colors - gray border only */
+html.light blockquote {
+  background-color: transparent;
+  border-color: var(--brand-gray-light);
+  color: var(--brand-black);
+}
+
+html.dark blockquote {
+  background-color: transparent;
+  border-color: var(--brand-gray-dark);
+  color: var(--brand-silver-light);
+}
+
+/* Callout Theme Colors - light gray border only */
+.callout.note {
+  border-color: var(--brand-gray-light);
+}
+
+html.light .callout.note {
+  background-color: transparent;
+}
+
+html.dark .callout.note {
+  background-color: transparent;
+  border-color: var(--brand-gray-dark);
+}
+
+.callout.warning {
+  border-color: var(--brand-gray-light);
+}
+
+html.light .callout.warning {
+  background-color: transparent;
+}
+
+html.dark .callout.warning {
+  background-color: transparent;
+  border-color: var(--brand-gray-dark);
+}
+
+.callout.tip {
+  border-color: var(--brand-gray-light);
+}
+
+html.light .callout.tip {
+  background-color: transparent;
+}
+
+html.dark .callout.tip {
+  background-color: transparent;
+  border-color: var(--brand-gray-dark);
+}
+
+/* HR Theme Colors */
+html.light hr {
+  border-top-color: var(--brand-gray-light);
+}
+
+html.dark hr {
+  border-top-color: var(--brand-gray-dark);
+}
+
+/* H2 Border Theme Colors */
+html.light h2 {
+  border-bottom-color: var(--brand-gray-light);
+}
+
+html.dark h2 {
+  border-bottom-color: var(--brand-gray-dark);
+}
+
+/* Hide # symbols in navigation links */
+.nextra-menu-desktop a::before,
+.nextra-menu-mobile a::before,
+[class*="nextra-menu"] a::before,
+[class*="menu"] a::before,
+.nextra-sidebar a::before,
+[class*="sidebar"] a::before,
+nav a::before {
+  content: none !important;
+}
+
+.nextra-menu-desktop a,
+.nextra-menu-mobile a,
+[class*="nextra-menu"] a,
+[class*="menu"] a,
+.nextra-sidebar a,
+[class*="sidebar"] a,
+nav a {
+  text-decoration: none;
+}
+
+a[href^="#"]::before,
+[class*="toc"] a::before,
+[class*="table-of-contents"] a::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Code block styling - default monospace, no colored syntax highlighting */
+:root {
+  --shiki-color-text: var(--brand-silver-light);
+  --shiki-color-background: var(--brand-midnight);
+  --shiki-token-constant: var(--brand-silver-light);
+  --shiki-token-string: var(--brand-silver-light);
+  --shiki-token-comment: var(--brand-silver-dark);
+  --shiki-token-keyword: var(--brand-silver-light);
+  --shiki-token-parameter: var(--brand-silver-light);
+  --shiki-token-function: var(--brand-silver-light);
+  --shiki-token-string-expression: var(--brand-silver-light);
+  --shiki-token-punctuation: var(--brand-silver-light);
+  --shiki-token-link: var(--brand-silver-light);
+}
+
+html.dark {
+  --shiki-color-text: var(--brand-silver-light);
+  --shiki-color-background: var(--brand-midnight);
+  --shiki-token-constant: var(--brand-silver-light);
+  --shiki-token-string: var(--brand-silver-light);
+  --shiki-token-comment: var(--brand-silver-dark);
+  --shiki-token-keyword: var(--brand-silver-light);
+  --shiki-token-link: var(--brand-silver-light);
+}
+
+html.light {
+  --shiki-color-text: var(--brand-black);
+  --shiki-color-background: var(--brand-silver-light);
+  --shiki-token-constant: var(--brand-black);
+  --shiki-token-string: var(--brand-black);
+  --shiki-token-comment: var(--brand-gray-light);
+  --shiki-token-keyword: var(--brand-black);
+  --shiki-token-parameter: var(--brand-black);
+  --shiki-token-function: var(--brand-black);
+  --shiki-token-string-expression: var(--brand-black);
+  --shiki-token-punctuation: var(--brand-black);
+  --shiki-token-link: var(--brand-black);
+}
+
+/* Copy Button Theme Colors */
+html.light .copy-button {
+  border-color: var(--brand-gray-light);
+  color: var(--brand-gray);
+}
+
+html.light .copy-button:hover {
+  background-color: var(--brand-silver-light);
+  border-color: var(--brand-gray);
+  color: var(--brand-black);
+}
+
+html.light .copy-button.copied {
+  background-color: var(--brand-silver-light);
+  border-color: var(--brand-gray);
+  color: var(--brand-black);
+}
+
+html.dark .copy-button {
+  border-color: var(--brand-gray-dark);
+  color: var(--brand-silver-dark);
+}
+
+html.dark .copy-button:hover {
+  background-color: var(--brand-midnight);
+  border-color: var(--brand-silver-dark);
+  color: var(--brand-silver-light);
+}
+
+html.dark .copy-button.copied {
+  background-color: var(--brand-midnight);
+  border-color: var(--brand-silver-dark);
+  color: var(--brand-silver-light);
+}
+
+/* Footer Styles */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+footer > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Footer Link Styles */
+footer a {
+  color: var(--brand-gray);
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+footer a:hover {
+  opacity: 0.7;
+}
+
+footer a svg {
+  margin-right: 0.5rem;
+}

@@ -1,0 +1,167 @@
+# ZisK SDK
+
+The ZisK SDK provides a programmatic Rust interface for generating proofs, verifying constraints, and executing programs in the ZisK zkVM.
+
+## Installation
+
+Add the SDK to your `Cargo.toml`:
+
+```toml
+[dependencies]
+zisk-sdk = { git = "https://github.com/0xPolygonHermez/zisk.git" }
+zisk-common = { git = "https://github.com/0xPolygonHermez/zisk.git" }
+anyhow = "1.0"
+```
+
+## Quick Start
+
+Generate a proof:
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+use zisk_common::io::ZiskStdin;
+use std::path::PathBuf;
+
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+---
+
+## Builder Pattern
+
+The SDK uses a type-safe builder pattern with three steps:
+
+1. **Backend Selection**: Choose `.emu()` or `.asm()`
+2. **Operation Selection**: Choose `.witness()`, `.verify_constraints()`, or `.prove()`
+3. **Configuration**: Set paths and options, then `.build()`
+
+### Backend Selection
+
+- `.emu()` - Emulator backend (works on all platforms)
+- `.asm()` - Assembly backend (Linux only, higher performance)
+
+### Operation Selection
+
+- `.witness()` - Execute program without constraint verification
+- `.verify_constraints()` - Verify constraints without generating proof
+- `.prove()` - Generate complete proof
+
+---
+
+## Configuration Methods
+
+### Common Methods
+
+Available for all backends and operations:
+
+- `.elf_path(path: PathBuf)` - **Required.** Path to ELF file
+- `.witness_lib_path(path: PathBuf)` - Custom witness library path (default: `$HOME/.zisk/bin/libzisk_witness.{so,dylib}`)
+- `.proving_key_path(path: PathBuf)` - Custom proving key directory (default: `$HOME/.zisk/provingKey`)
+- `.verbose(level: u8)` - Verbosity level 0-4 (default: 0)
+- `.shared_tables(enable: bool)` - Enable shared tables for clusters (default: false)
+
+### Proof-Specific Methods
+
+Only available with `.prove()`:
+
+- `.output_dir(path: PathBuf)` - **Required.** Output directory for proof files
+- `.aggregation(enable: bool)` - Enable proof aggregation (default: true)
+- `.final_snark(enable: bool)` - Generate final SNARK proof (default: false)
+- `.verify_proofs(enable: bool)` - Verify proof after generation (default: false)
+- `.save_proofs(enable: bool)` - Save proof files to disk (default: false)
+- `.gpu(params: ParamsGPU)` - Configure GPU acceleration
+
+### Assembly-Specific Methods
+
+Only available with `.asm()`:
+
+- `.base_port(port: u16)` - Base port for ASM microservices (default: 23115)
+- `.unlock_mapped_memory(enable: bool)` - Unlock memory map for ROM file (default: false)
+
+---
+
+## Prover Methods
+
+Once built, the prover provides these methods:
+
+- `.execute(stdin: ZiskStdin)` - Execute program (available with `.witness()`)
+- `.stats(stdin: ZiskStdin, ...)` - Get execution statistics (available with `.witness()`)
+- `.verify_constraints(stdin: ZiskStdin)` - Verify constraints (available with `.verify_constraints()`)
+- `.prove(stdin: ZiskStdin)` - Generate proof (available with `.prove()`)
+- `.world_rank() -> i32` - Get MPI world rank
+- `.executed_steps() -> u64` - Get number of executed steps
+
+---
+
+## Examples
+
+### Proof Generation
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+use zisk_common::io::ZiskStdin;
+use std::path::PathBuf;
+
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("program.elf"))
+    .output_dir(PathBuf::from("proof"))
+    .aggregation(true)
+    .verify_proofs(true)
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+### Constraint Verification
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .verify_constraints()
+    .elf_path(PathBuf::from("program.elf"))
+    .build()?;
+
+let result = prover.verify_constraints(ZiskStdin::from_file("input.bin")?)?;
+```
+
+### Assembly Backend
+
+```rust
+let prover = ProverClientBuilder::new()
+    .asm()
+    .prove()
+    .elf_path(PathBuf::from("program.elf"))
+    .base_port(23115)
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+```
+
+---
+
+## Type Safety
+
+The builder pattern ensures compile-time type safety:
+
+- Backend-specific methods (e.g., `.base_port()`) are only available with `.asm()`
+- Operation-specific methods (e.g., `.output_dir()`) are only available with `.prove()`
+- Invalid configurations fail at compile time
+
+---
+
+## Related Documentation
+
+- [Quickstart Guide](/getting-started/quickstart) - Get started with ZisK
+- [Build and Prove](/developer/build-and-prove) - Development workflow
+- [GPU Proof Generation](/optimization/gpu-proof-generation) - GPU acceleration
+- [Concurrent Proof Generation](/optimization/concurrent-proof-generation) - Parallel execution

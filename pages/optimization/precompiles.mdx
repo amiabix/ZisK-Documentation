@@ -1,0 +1,59 @@
+# Precompiles
+
+Precompiles are system functions that execute operations via dedicated state machines. During RISC-V to ZisK transpilation, precompile calls are replaced with operations that delegate to secondary state machines.
+
+Precompiles are invoked using the RISC-V `ecall` instruction, which is converted to a CSR set operation during transpilation.
+
+---
+
+## Usage
+
+Precompiles are typically used by patching third-party crates to replace expensive operations with system calls. The patched crates are then used as dependencies in ZisK programs.
+
+Example: [patched `tiny-keccak` crate](https://github.com/0xPolygonHermez/zisk-patch-tiny-keccak/tree/zisk)
+
+## Available Precompiles
+
+- [syscall_arith256_mod](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/arith256_mod.rs): Modular multiplication followed by addition over 256-bit non-negative integers.
+
+- [syscall_arith256](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/arith256.rs): Multiplication followed by addition over 256-bit non-negative integers.
+
+- [syscall_keccak_f](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/keccakf.rs): Keccak-f[1600] permutation function from the [Keccak](https://keccak.team/files/Keccak-reference-3.0.pdf) cryptographic sponge construction.
+
+- [syscall_sha256_f](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/sha256f.rs): Extend and compress function of the [SHA-256](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf) cryptographic hash algorithm.
+
+- [syscall_secp256k1_add](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/secp256k1_add.rs): Elliptic curve point addition over the [Secp256k1](https://en.bitcoin.it/wiki/Secp256k1) curve.
+
+- [syscall_secp256k1_dbl](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/secp256k1_dbl.rs): Elliptic curve point doubling over the [Secp256k1](https://en.bitcoin.it/wiki/Secp256k1) curve.
+
+- [syscall_bn254_curve_add](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bn254_curve_add.rs): Elliptic curve point addition over the [Bn254](https://hackmd.io/kcEJAWISQ56eE6YpBnurgw) curve.
+
+- [syscall_bn254_curve_dbl](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bn254_curve_dbl.rs): Elliptic curve point doubling over the [Bn254](https://hackmd.io/kcEJAWISQ56eE6YpBnurgw) curve.
+
+- [syscall_bn254_complex_add](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bn254_complex_add.rs): Complex addition within the quadratic extension built over the base field of the [Bn254](https://hackmd.io/kcEJAWISQ56eE6YpBnurgw) curve.
+
+- [syscall_bn254_complex_sub](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bn254_complex_sub.rs): Complex subtraction within the quadratic extension built over the base field of the [Bn254](https://hackmd.io/kcEJAWISQ56eE6YpBnurgw) curve.
+
+- [syscall_bn254_complex_mul](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bn254_complex_mul.rs): Complex multiplication within the quadratic extension built over the base field of the [Bn254](https://hackmd.io/kcEJAWISQ56eE6YpBnurgw) curve.
+
+- [syscall_arith384_mod](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/arith384_mod.rs): Modular multiplication followed by addition over 384-bit non-negative integers.
+
+- [syscall_bls12_381_curve_add](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bls12_381_curve_add.rs): Elliptic curve point addition over the BLS12-381 curve.
+
+- [syscall_bls12_381_curve_dbl](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bls12_381_curve_dbl.rs): Elliptic curve point doubling over the BLS12-381 curve.
+
+- [syscall_bls12_381_complex_add](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bls12_381_complex_add.rs): Complex addition within the quadratic extension built over the base field of the BLS12-381 curve.
+
+- [syscall_bls12_381_complex_sub](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bls12_381_complex_sub.rs): Complex subtraction within the quadratic extension built over the base field of the BLS12-381 curve.
+
+- [syscall_bls12_381_complex_mul](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/bls12_381_complex_mul.rs): Complex multiplication within the quadratic extension built over the base field of the BLS12-381 curve.
+
+- [syscall_add256](https://github.com/0xPolygonHermez/zisk/tree/main/ziskos/entrypoint/src/syscalls/add256.rs): 256-bit addition with carry in and carry out
+
+---
+
+## Next Steps
+
+- **[Concurrent Proof Generation](/optimization/concurrent-proof-generation)** — Parallel proof generation
+
+- **[GPU Proof Generation](/optimization/gpu-proof-generation)** — GPU acceleration

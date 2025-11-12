@@ -1,0 +1,56 @@
+# Getting Started
+
+This guide will walk you through setting up your first ZisK project.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Node.js 18+ installed
+- npm or yarn package manager
+- Basic knowledge of JavaScript/TypeScript
+
+## Installation
+
+Install ZisK using your preferred package manager:
+
+```bash
+# Using npm
+npm install zisk
+
+# Using yarn
+yarn add zisk
+
+# Using pnpm
+pnpm add zisk
+```
+
+## Initial Setup
+
+Create a new configuration file:
+
+```typescript
+// config.ts
+import { ZisKConfig } from 'zisk'
+
+export const config: ZisKConfig = {
+  port: 3000,
+  environment: 'development',
+}
+```
+
+## Running Your First Project
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000` to see your application running.
+
+## Next Steps
+
+- Learn about [Configuration](/guides/configuration)
+- Explore [Advanced Topics](/guides/advanced)
+

@@ -1,0 +1,60 @@
+# Configuration
+
+Learn how to configure ZisK to suit your project needs.
+
+## Configuration File
+
+ZisK uses a configuration file to manage settings. Create a `zisk.config.ts` file in your project root:
+
+```typescript
+import { ZisKConfig } from 'zisk'
+
+const config: ZisKConfig = {
+  // Server settings
+  port: 3000,
+  host: 'localhost',
+  
+  // Environment
+  environment: process.env.NODE_ENV || 'development',
+  
+  // Feature flags
+  features: {
+    caching: true,
+    logging: true,
+  },
+}
+
+export default config
+```
+
+## Environment Variables
+
+You can also configure ZisK using environment variables:
+
+```bash
+ZISK_PORT=3000
+ZISK_HOST=localhost
+ZISK_ENVIRONMENT=production
+```
+
+## Advanced Configuration
+
+For more complex setups, you can use a function-based configuration:
+
+```typescript
+import { ZisKConfig } from 'zisk'
+
+export default async function getConfig(): Promise<ZisKConfig> {
+  const env = process.env.NODE_ENV
+  
+  return {
+    port: parseInt(process.env.PORT || '3000'),
+    environment: env,
+    features: {
+      caching: env === 'production',
+      logging: env !== 'test',
+    },
+  }
+}
+```
+

@@ -1,0 +1,298 @@
+# Distributed System Configuration
+
+This guide documents configuration options for the ZisK distributed proof generation system. Configuration can be specified via TOML files, command-line arguments, or environment variables. If no configuration is provided, built-in defaults are used.
+
+---
+
+## Coordinator Configuration
+
+### Configuration Files
+
+Specify configuration file location:
+
+```bash
+# Command-line argument
+cargo run --release --bin zisk-coordinator -- --config /path/to/config.toml
+
+# Environment variable
+export ZISK_COORDINATOR_CONFIG_PATH="/path/to/config.toml"
+cargo run --release --bin zisk-coordinator
+```
+
+If no configuration file is specified, built-in defaults are used.
+
+### Configuration Options
+
+**Service:**
+- `service.name` (String, default: "ZisK Distributed Coordinator") - Service name
+- `service.environment` (String, default: "development") - Environment setting (development, staging, production)
+
+**Server:**
+- `server.host` (String, default: "0.0.0.0") - Server host
+- `server.port` (Number, default: 50051) - Server port (CLI: `--port`)
+- `server.shutdown_timeout_seconds` (Number, default: 30) - Graceful shutdown timeout in seconds
+
+**Logging:**
+- `logging.level` (String, default: "info") - Log level: error, warn, info, debug, trace (Environment: `RUST_LOG`)
+- `logging.format` (String, default: "pretty") - Log format: pretty, json, compact
+- `logging.file_path` (String, optional) - Optional log file path
+
+**Coordinator:**
+- `coordinator.max_workers_per_job` (Number, default: 10) - Maximum workers per proof job
+- `coordinator.max_total_workers` (Number, default: 1000) - Maximum total registered workers
+- `coordinator.phase1_timeout_seconds` (Number, default: 300) - Phase 1 timeout in seconds
+- `coordinator.phase2_timeout_seconds` (Number, default: 600) - Phase 2 timeout in seconds
+- `coordinator.webhook_url` (String, optional) - Optional webhook URL for job completion (CLI: `--webhook-url`)
+
+### Configuration Examples
+
+**Development:**
+
+```toml
+[service]
+name = "ZisK Distributed Coordinator"
+environment = "development"
+
+[logging]
+level = "debug"
+format = "pretty"
+```
+
+**Production:**
+
+```toml
+[service]
+name = "ZisK Distributed Coordinator"
+environment = "production"
+
+[server]
+host = "0.0.0.0"
+port = 50051
+
+[logging]
+level = "info"
+format = "json"
+file_path = "/var/log/distributed/coordinator.log"
+
+[coordinator]
+max_workers_per_job = 20
+max_total_workers = 5000
+phase1_timeout_seconds = 600
+phase2_timeout_seconds = 1200
+webhook_url = "http://webhook.example.com/notify?job_id={$job_id}"
+```
+
+### Webhook Notifications
+
+Configure webhook URL for job completion notifications. The placeholder $job_id can be used in the URL (e.g., `?job_id={$job_id}`), or the system can append the job ID automatically:
+
+```bash
+zisk-coordinator --webhook-url 'http://example.com/notify?job_id={$job_id}'
+```
+
+**Webhook payload (JSON POST):**
+
+```json
+{
+  "job_id": "job_12345",
+  "success": true,
+  "duration_ms": 45000,
+  "proof": [1234567890, 9876543210, ...],
+  "executed_steps": 85309,
+  "timestamp": "2025-10-03T14:30:00Z",
+  "error": null
+}
+```
+
+**Fields:**
+- `job_id` (string): Unique job identifier
+- `success` (boolean): `true` if completed successfully, `false` if failed
+- `duration_ms` (number): Execution time in milliseconds
+- `proof` (array of u64 | null): Final proof data (only on success)
+- `executed_steps` (number | null): Number of execution steps (optional, only on success)
+- `timestamp` (string): ISO 8601 timestamp
+- `error` (object | null): Error details (only on failure)
+
+**Error object structure:**
+
+```json
+{
+  "code": "WORKER_FAILURE",
+  "message": "Worker node-003 failed during proof generation: Out of memory"
+}
+```
+
+---
+
+## Worker Configuration
+
+### Configuration Files
+
+Specify configuration file location:
+
+```bash
+# Command-line argument
+cargo run --release --bin zisk-worker -- --config /path/to/config.toml
+
+# Environment variable
+export ZISK_WORKER_CONFIG_PATH="/path/to/config.toml"
+cargo run --release --bin zisk-worker
+```
+
+If no configuration file is specified, built-in defaults are used.
+
+### Configuration Options
+
+**Worker:**
+- `worker.worker_id` (String, default: Auto-generated UUID) - Unique worker identifier (CLI: `--worker-id`)
+- `worker.compute_capacity.compute_units` (Number, default: 10) - Worker compute capacity (CLI: `--compute-capacity`)
+- `worker.environment` (String, default: "development") - Environment setting (development, staging, production)
+- `worker.inputs_folder` (String, default: ".") - Path to input files directory (CLI: `--inputs-folder`)
+
+**Connection:**
+- `coordinator.url` (String, default: "http://127.0.0.1:50051") - Coordinator server URL (CLI: `--coordinator-url`)
+- `connection.reconnect_interval_seconds` (Number, default: 5) - Reconnection interval in seconds
+- `connection.heartbeat_timeout_seconds` (Number, default: 30) - Heartbeat timeout in seconds
+
+**Logging:**
+- `logging.level` (String, default: "info") - Log level: error, warn, info, debug, trace (Environment: `RUST_LOG`)
+- `logging.format` (String, default: "pretty") - Log format: pretty, json, compact
+- `logging.file_path` (String, optional) - Optional log file path
+
+**Proof Generation (CLI only):**
+- `--elf` (String, required) - Path to ELF file
+- `--proving-key` (String, default: "~/.zisk/provingKey") - Path to setup folder
+- `--witness-lib` (String, default: "~/.zisk/bin/libzisk_witness.so") - Path to witness library
+- `--asm` (String, default: "~/.zisk/cache") - Path to ASM file (mutually exclusive with `--emulator`)
+- `--emulator` (Boolean, default: false) - Use prebuilt emulator (mutually exclusive with `--asm`)
+- `--asm-port` (Number, default: 23115) - Base port for Assembly microservices
+- `--unlock-mapped-memory` (Boolean, default: false) - Unlock mapped memory (mutually exclusive with `--emulator`)
+- `--shared-tables` (Boolean, default: false) - Share tables when running in cluster
+- `-f`, `--final-snark` (Boolean, default: false) - Generate final SNARK
+- `-r`, `--preallocate` (Boolean, default: false) - GPU preallocation flag
+- `-t`, `--max-streams` (Number, optional) - Maximum GPU streams
+- `-n`, `--number-threads-witness` (Number, optional) - Threads for witness computation
+- `-x`, `--max-witness-stored` (Number, optional) - Maximum witnesses in memory
+- `-v`, `-vv`, `-vvv`, ... (Number, default: 0) - Verbosity: 0=error, 1=warn, 2=info, 3=debug, 4=trace
+- `-d`, `--debug` (String, optional) - Enable debug mode with component filter
+- `--verify-constraints` (Boolean, default: false) - Verify constraints
+
+### Input Files
+
+The `--inputs-folder` parameter specifies the base directory for input files. When the coordinator sends a filename, the worker combines `--inputs-folder` + `filename` to locate the file.
+
+**Example:**
+
+```bash
+zisk-worker --elf program.elf --inputs-folder /data/inputs/
+# Coordinator requests "input.bin" → Worker looks for "/data/inputs/input.bin"
+```
+
+### Configuration Examples
+
+**Development:**
+
+```toml
+[worker]
+compute_capacity.compute_units = 10
+environment = "development"
+
+[logging]
+level = "debug"
+format = "pretty"
+```
+
+**Production:**
+
+```toml
+[worker]
+worker_id = "my-worker-001"
+compute_capacity.compute_units = 10
+environment = "production"
+inputs_folder = "/app/inputs"
+
+[coordinator]
+url = "http://127.0.0.1:50051"
+
+[connection]
+reconnect_interval_seconds = 5
+heartbeat_timeout_seconds = 30
+
+[logging]
+level = "info"
+format = "pretty"
+file_path = "/var/log/distributed/worker-001.log"
+```
+
+---
+
+## Launching Proofs
+
+Launch a proof generation request:
+
+```bash
+cargo run --release --bin zisk-coordinator -- prove --input <input_filename> --compute-capacity 10
+```
+
+**How it works:**
+- `--compute-capacity` specifies total compute units required
+- Coordinator assigns workers to meet capacity requirement
+- Workload distributed across multiple workers if needed
+- Requests exceeding available capacity fail with error
+
+---
+
+## Monitoring
+
+The coordinator exposes gRPC endpoints for monitoring:
+
+```bash
+# Health check
+grpcurl -plaintext 127.0.0.1:50051 zisk.distributed.api.v1.ZiskDistributedApi/HealthCheck
+
+# System status
+grpcurl -plaintext 127.0.0.1:50051 zisk.distributed.api.v1.ZiskDistributedApi/SystemStatus
+
+# List active jobs
+grpcurl -plaintext -d '{"active_only": true}' \
+  127.0.0.1:50051 zisk.distributed.api.v1.ZiskDistributedApi/JobsList
+
+# List connected workers
+grpcurl -plaintext -d '{"available_only": true}' \
+  127.0.0.1:50051 zisk.distributed.api.v1.ZiskDistributedApi/WorkersList
+```
+
+---
+
+## Troubleshooting
+
+**Worker can't connect:**
+- Verify coordinator is running
+- Check firewall settings
+- Ensure URL format is `http://host:port`
+
+**Configuration not loading:**
+- Verify TOML syntax
+- Check file permissions
+- Use CLI overrides to test
+
+**Worker not receiving tasks:**
+- Check registration in coordinator logs
+- Verify compute capacity
+- Ensure unique worker IDs
+
+**Input file not found:**
+- Verify file exists in `--inputs-folder`
+- Check file permissions
+- Use filename only (not full path) when launching proofs
+
+**Port conflicts:**
+- Use `--port` flag or update configuration file
+
+**Enable debug logging:**
+
+```toml
+[logging]
+level = "debug"
+format = "pretty"
+```

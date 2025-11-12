@@ -1,0 +1,123 @@
+# Distributed Proof Generation
+
+In this overview, we will go over ZisK's distributed proof generation system and how it distributes proof workloads across multiple machines. The system orchestrates proof generation across a pool of worker nodes.
+
+---
+
+## How is Distributed Proof Generation architected with ZisK ?
+
+Distributed proof generation in ZisK splits proof generation workloads across multiple machines, allowing parallel execution of proof generation tasks. The system uses a Coordinator-Worker architecture:
+
+- **Coordinator**: Receives proof requests, manages worker pools, and orchestrates the 3-phase proof workflow.
+
+- **Workers**: Execute proof computations independently and report results back to the coordinator.
+
+The system uses gRPC bidirectional streaming for communication. Workers process tasks independently while the coordinator manages job lifecycles and aggregates results.
+
+---
+
+## System Architecture
+
+The distributed proving system uses a **Coordinator-Worker architecture** where a central coordinator orchestrates proof generation across multiple computational workers.
+
+### Coordinator
+
+The **Coordinator** manages the entire proof generation lifecycle. It receives proof requests from clients, maintains a registry of available workers, and distributes work based on each worker's reported compute capacity. The coordinator orchestrates the three-phase proof generation workflow (Contributions → Prove → Aggregate), monitors worker health through heartbeat mechanisms, and aggregates results to deliver final proofs back to clients.
+
+**Key characteristics:**
+
+- **Stateful coordination**: Maintains job state and worker registry but doesn't perform computations
+
+- **Fault tolerance**: Single point of coordination with error handling
+
+- **Worker management**: Manages multiple workers simultaneously
+
+- **gRPC interface**: Exposes API for clients and administrative operations
+
+### Worker
+
+**Workers** are self-contained computational units that perform the actual proof generation work. Each worker registers with the coordinator, reports its compute capacity, and waits for task assignments. When assigned work, workers independently load the required files (ELF programs, proving keys, witness library, and input data), execute the three-phase proof generation process, and report results back to the coordinator.
+
+**Key characteristics:**
+
+- **Local witness computation**: Each worker computes witness data locally (never transmitted over network)
+
+- **Deployment options**: Can run on CPU or GPU with appropriate build flags
+
+- **MPI support**: Can operate as single machines or MPI clusters for additional parallelization
+
+- **Independent operation**: Self-contained units that can process tasks autonomously
+
+---
+
+## How It Works
+
+As discussed above the architecture for ZisK's distributed proving is composed of two main actors:
+
+- **Coordinator**: Manages incoming proof requests and splits the work, based on required compute capacity, across distributed available workers.
+
+- **Worker**: Registers with the coordinator, reporting its compute capacity, and waits for tasks to be assigned. The worker can be a single machine or a cluster of machines.
+
+The process of generating a proof proceeds as follows:
+
+1. The Coordinator starts on a host and listens for incoming proof requests.
+
+2. Worker nodes connect to the Coordinator, registering their compute capacity and availability.
+
+3. When a proof generation request is received, the Coordinator splits the work across multiple Workers according to the requested compute capacity. The coordinator selects workers sequentially until the required capacity is met, then distributes compute units using round-robin allocation (respecting each worker's capacity limits). The proof generation job is divided into three phases:
+
+   - **Partial Contributions**: Each Worker computes its partial challenges.
+
+   - **Prove**: Workers compute the global challenge and generate their respective partial proofs.
+
+   - **Aggregation**: The first worker to complete Phase 2 becomes the aggregator and combines all partial proofs into the final proof.
+
+![Distributed Proof Generation Workflow](/images/distributed-image.png)
+
+4. The Coordinator collects the final proof and returns it to the client.
+
+The system uses gRPC for coordination and MPI for worker-level parallelization.
+
+---
+
+## Key Concepts
+
+### Compute Capacity
+
+- Workers report their computational capacity in **compute units** (e.g., 4, 8, 16 units).
+
+- The coordinator selects workers sequentially from the pool of available workers until the required compute capacity is met.
+
+- Work is distributed using round-robin allocation of compute units, respecting each worker's reported capacity limits.
+
+### Aggregator Selection
+
+- The first worker to complete Phase 2 (Prove phase) becomes the aggregator.
+
+- This aggregator is responsible for combining all partial proofs into the final proof.
+
+- Other workers are freed immediately after completing Phase 2 and sending their partial proofs.
+
+### Local Witness Computation
+
+- Each worker computes witness data locally; this data is never transmitted over the network.
+
+- Only cryptographic challenges, partial proofs, and the final proof are transmitted between the coordinator and workers.
+
+### Communication
+
+- Workers maintain persistent bidirectional gRPC streams with the coordinator for real-time task assignment and result reporting.
+
+- The coordinator also exposes administrative APIs for monitoring system status, job progress, and worker health.
+
+---
+
+## Next Steps
+
+Continue to:
+
+- **[Manual Deployment](/distributed/manual-deployment)** - Step-by-step setup, commands, and testing
+
+- **[Docker Deployment](/distributed/docker-deployment)** - Containerized deployment with Docker
+
+- **[Configuration Guide](/distributed/configuration-guide)** - Configuration reference and troubleshooting

@@ -1,0 +1,142 @@
+# Glossary
+
+This glossary provides definitions and references for ZisK terminology, commands, and technical concepts.
+
+## Commands
+
+### cargo-zisk Commands
+
+| Command | Description | Key Flags |
+|---------|-------------|-----------|
+| `build` | Compile Rust program to ELF | `--release` |
+| `run` | Build and execute in emulator | `-i`, `--metrics`, `--stats` |
+| `rom-setup` | Generate program setup files | `-e`, `-k`, `-v` |
+| `verify-constraints` | Verify all constraints | `-e`, `-i`, `-w`, `-k`, `-s`, `-l`, `-p`, `-u`, `-v`, `-j`, `--field` |
+| `prove` | Generate cryptographic proof | `-e`, `-i`, `-w`, `-k`, `-o`, `-a`, `-y`, `-s`, `-l`, `-f`, `-v`, `-n`, `-r`, `-t`, `-d`, `-j`, `-u`, `-p`, `-x`, `-b`, `-m`, `--field` |
+| `verify` | Verify generated proof | `-p`, `-k`, `-v` |
+| `check-setup` | Validate setup files | `-k`, `-a`, `-f`, `-v`, `--field` |
+| `execute` | Execute program and write output | `-e`, `-i`, `-o`, `-w`, `-k`, `-s`, `-l`, `-p`, `-u`, `-v`, `-j`, `--field` |
+| `stats` | Compute witness statistics | `-e`, `-i`, `-w`, `-k`, `-s`, `-l`, `-p`, `-u`, `-v`, `-n`, `-x`, `-d`, `-m`, `-j`, `--field`, `--mpi-node` |
+| `sdk` | SDK management tool | Subcommands: `new`, `build-toolchain`, `install-toolchain` |
+| `server` | Run proof generation server | Similar to `prove` with server mode |
+| `prove-client` | Client for proof generation server | Subcommands: `prove`, `verify-constraints`, `status`, `shutdown` |
+| `clean` | Clean cache directory | |
+
+## Flags
+
+### Common Flags
+
+Flags used across multiple commands:
+
+| Flag | Long Form | Description | Commands |
+|------|-----------|-------------|----------|
+| `-e` | `--elf` | ELF file location | `prove`, `execute`, `stats`, `rom-setup`, `verify-constraints` |
+| `-i` | `--input` | Input file location | `prove`, `run`, `execute`, `stats`, `verify-constraints` |
+| `-w` | `--witness` | Witness library location | `prove`, `execute`, `stats`, `verify-constraints` |
+| `-k` | `--proving-key` | Proving key directory | `prove`, `rom-setup`, `execute`, `stats`, `verify-constraints`, `check-setup` |
+| `-v` | `--verbose` | Increase verbosity (`-v`, `-vv`, `-vvv`) | `prove`, `execute`, `stats`, `verify-constraints`, `check-setup`, `verify`, `rom-setup` |
+| `--field` | | Field type (default: Goldilocks) | `prove`, `execute`, `stats`, `verify-constraints`, `check-setup` |
+
+### Command-Specific Flags
+
+#### Build
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `--release` | | Build in release mode |
+
+#### Run
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `--metrics` | | Show performance metrics (no short form) |
+| `--stats` | | Show execution statistics (no short form) |
+
+#### Prove
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-o` | `--output-dir` | Output directory (default: "tmp") |
+| `-a` | `--aggregation` | Generate final aggregated proof |
+| `-y` | `--verify-proofs` | Verify proof after generation |
+| `-s` | `--asm` | ASM file path (mutually exclusive with `--emulator`) |
+| `-l` | `--emulator` | Use prebuilt emulator (mutually exclusive with `--asm`) |
+| `-f` | `--final-snark` | Generate final SNARK proof |
+| `-n` | `--number-threads-witness` | Number of threads for witness computation |
+| `-r` | `--preallocate` | GPU preallocation |
+| `-t` | `--max-streams` | Maximum GPU streams |
+| `-d` | `--debug` | Enable debug mode with optional component filter |
+| `-j` | `--shared-tables` | Share tables in cluster mode |
+| `-u` | `--unlock-mapped-memory` | Unlock memory map (mutually exclusive with `--emulator`) |
+| `-p` | `--port` | ASM microservices port (default: 23115, conflicts with `--emulator`) |
+| `-x` | `--max-witness-stored` | Maximum witnesses in memory |
+| `-b` | `--save-proofs` | Save intermediate proofs to disk |
+| `-m` | `--minimal-memory` | Use minimal memory mode |
+| `--max-steps` | | Maximum execution steps (no short form in `prove`) |
+
+#### Verify
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-p` | `--proof` | Proof file location |
+| `-k` | `--verkey` | Verification key file (optional, defaults to `$HOME/.zisk`) |
+
+#### Execute
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-o` | `--output-path` | Output file path (required) |
+| `-s` | `--asm` | ASM file path (mutually exclusive with `--emulator`) |
+| `-l` | `--emulator` | Use prebuilt emulator (mutually exclusive with `--asm`) |
+| `-p` | `--port` | ASM microservices port (default: 23115, conflicts with `--emulator`) |
+| `-u` | `--unlock-mapped-memory` | Unlock memory map (mutually exclusive with `--emulator`) |
+| `-j` | `--shared-tables` | Share tables in cluster mode |
+
+#### Stats
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-s` | `--asm` | ASM file path (mutually exclusive with `--emulator`) |
+| `-l` | `--emulator` | Use prebuilt emulator (mutually exclusive with `--asm`) |
+| `-p` | `--port` | ASM microservices port (default: 23115, conflicts with `--emulator`) |
+| `-u` | `--unlock-mapped-memory` | Unlock memory map (mutually exclusive with `--emulator`) |
+| `-n` | `--number-threads-witness` | Number of threads for witness computation |
+| `-x` | `--max-witness-stored` | Maximum witnesses in memory |
+| `-d` | `--debug` | Enable debug mode with optional component filter |
+| `-m` | `--minimal-memory` | Use minimal memory mode |
+| `-j` | `--shared-tables` | Share tables in cluster mode |
+| `--mpi-node` | | MPI node identifier |
+
+#### Verify-Constraints
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-s` | `--asm` | ASM file path (mutually exclusive with `--emulator`) |
+| `-l` | `--emulator` | Use prebuilt emulator (mutually exclusive with `--asm`) |
+| `-p` | `--port` | ASM microservices port (default: 23115, conflicts with `--emulator`) |
+| `-u` | `--unlock-mapped-memory` | Unlock memory map (mutually exclusive with `--emulator`) |
+| `-j` | `--shared-tables` | Share tables in cluster mode |
+
+#### Check-Setup
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-a` | `--aggregation` | Check aggregation setup |
+| `-f` | `--final-snark` | Check final SNARK setup |
+
+#### Rom-Setup
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-v` | `--verbose` | Increase verbosity |
+
+### Flag Relationships
+
+**Mutually Exclusive:**
+- `--asm` ↔ `--emulator`
+- `--emulator` ↔ `--unlock-mapped-memory`
+- `--emulator` ↔ `--port`
+
+**Conflicts:**
+- `--emulator` conflicts with `--port` and `--unlock-mapped-memory`
+
+---
+
+## Next Steps
+
+- **[Utilities](/reference/utilities)** - Core utility functions and helpers
+- **[Build and Prove](/developer/build-and-prove)** - Development workflow
+
+
+

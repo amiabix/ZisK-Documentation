@@ -1,0 +1,253 @@
+# Utilities
+
+Utility functions and helpers for ZisK development. This page documents the core `ziskos` functions and common patterns for working with ZisK programs.
+
+---
+
+## Core Functions
+
+### `ziskos::entrypoint!()`
+
+Macro that registers your main function as the ZisK program entry point.
+
+**Signature:**
+```rust
+ziskos::entrypoint!(main);
+```
+
+**Usage:**
+```rust
+#![no_main]
+ziskos::entrypoint!(main);
+
+fn main() {
+    // Your program logic
+}
+```
+
+**Note:** This macro must be used in conjunction with `#![no_main]` to disable the standard Rust entry point.
+
+---
+
+### `ziskos::read_input()`
+
+Reads input data from the `input.bin` file into your ZisK program.
+
+**Signature:**
+```rust
+fn read_input() -> Vec<u8>
+```
+
+**Returns:**
+- `Vec<u8>` - Raw byte array containing the input data
+
+**Example:**
+```rust
+let input = ziskos::read_input();
+let value = u64::from_le_bytes(input[0..8].try_into().unwrap());
+```
+
+**Note:** All input data is private by default. The data is loaded from `input.bin` which is prepared in your `build.rs` script.
+
+---
+
+### `ziskos::set_output()`
+
+Publishes a 32-bit value as public output. This is the only way to make data public in a ZisK program.
+
+**Signature:**
+```rust
+fn set_output(index: usize, value: u32)
+```
+
+**Parameters:**
+- `index` - Output slot index (0-63)
+- `value` - 32-bit unsigned integer to publish
+
+**Example:**
+```rust
+ziskos::set_output(0, 42u32);
+ziskos::set_output(1, 100u32);
+```
+
+**Limitations:**
+- Only 64 output slots are available (indices 0-63)
+- Only `u32` values are supported
+- Values must be explicitly published; everything else remains private
+
+---
+
+## Input/Output Utilities
+
+### Reading Structured Input
+
+When working with complex input data, use serialization crates like `bincode`:
+
+```rust
+use bincode;
+
+// In build.rs - serialize data
+let data = MyStruct { field1: 42, field2: "hello" };
+let encoded = bincode::serialize(&data)?;
+std::fs::write("input.bin", encoded)?;
+
+// In main.rs - deserialize data
+let input = ziskos::read_input();
+let data: MyStruct = bincode::deserialize(&input)?;
+```
+
+### Writing Complex Output
+
+Since `set_output()` only accepts `u32` values, larger data types must be split into chunks:
+
+```rust
+// Write a 256-bit hash (8 x 32-bit chunks)
+fn write_hash(hash: &[u8; 32]) {
+    for i in 0..8 {
+        let val = u32::from_be_bytes([
+            hash[i * 4],
+            hash[i * 4 + 1],
+            hash[i * 4 + 2],
+            hash[i * 4 + 3],
+        ]);
+        ziskos::set_output(i, val);
+    }
+}
+
+// Write a 64-bit value (2 x 32-bit chunks)
+fn write_u64(value: u64) {
+    ziskos::set_output(0, (value >> 32) as u32);
+    ziskos::set_output(1, value as u32);
+}
+```
+
+---
+
+## Data Conversion Helpers
+
+### Byte Order Conversion
+
+ZisK programs often need to convert between different byte orders:
+
+```rust
+use byteorder::{BigEndian, LittleEndian, ByteOrder};
+
+// Read big-endian u32 from input
+let input = ziskos::read_input();
+let value = BigEndian::read_u32(&input[0..4]);
+
+// Write little-endian u64 to output
+let value: u64 = 1234567890;
+ziskos::set_output(0, (value & 0xFFFFFFFF) as u32);
+ziskos::set_output(1, ((value >> 32) & 0xFFFFFFFF) as u32);
+```
+
+### Array Chunking
+
+Helper function to split large arrays into u32 chunks:
+
+```rust
+fn write_bytes_as_u32s(data: &[u8], start_index: usize) {
+    for (i, chunk) in data.chunks(4).enumerate() {
+        let mut bytes = [0u8; 4];
+        bytes[..chunk.len()].copy_from_slice(chunk);
+        ziskos::set_output(start_index + i, u32::from_le_bytes(bytes));
+    }
+}
+```
+
+---
+
+## Common Patterns
+
+### Output Index Management
+
+Manage output indices systematically to avoid conflicts:
+
+```rust
+struct OutputIndex {
+    current: usize,
+}
+
+impl OutputIndex {
+    fn new() -> Self {
+        Self { current: 0 }
+    }
+    
+    fn write(&mut self, value: u32) {
+        assert!(self.current < 64, "Output index out of bounds");
+        ziskos::set_output(self.current, value);
+        self.current += 1;
+    }
+    
+    fn write_u64(&mut self, value: u64) {
+        self.write((value >> 32) as u32);
+        self.write(value as u32);
+    }
+}
+
+// Usage
+let mut output = OutputIndex::new();
+output.write(42u32);
+output.write_u64(1234567890u64);
+```
+
+### Input Validation
+
+Validate input data before processing:
+
+```rust
+fn read_and_validate_input() -> Result<Vec<u8>, &'static str> {
+    let input = ziskos::read_input();
+    
+    if input.is_empty() {
+        return Err("Input is empty");
+    }
+    
+    if input.len() < 8 {
+        return Err("Input too short");
+    }
+    
+    Ok(input)
+}
+```
+
+### Structured Output
+
+Create a helper for structured output:
+
+```rust
+struct ProgramOutput {
+    timestamp: u32,
+    result: u32,
+    status: u32,
+}
+
+impl ProgramOutput {
+    fn publish(&self) {
+        ziskos::set_output(0, self.timestamp);
+        ziskos::set_output(1, self.result);
+        ziskos::set_output(2, self.status);
+    }
+}
+```
+
+---
+
+## Practices
+
+1. **Use consistent output indexing** - Define constants or a struct to manage output indices
+2. **Validate input early** - Check input size and format before processing
+3. **Serialize complex data** - Use `bincode` or similar for structured input/output
+4. **Document output format** - Clearly document what each output index represents
+5. **Handle edge cases** - Check for empty input, overflow, and boundary conditions
+
+---
+
+## Next Steps
+
+- **[I/O Model](/developer/io)** - Detailed explanation of ZisK's input/output model
+- **[Setup](/developer/setup)** - How to set up a ZisK program
+- **[Build and Prove](/developer/build-and-prove)** - Development workflow
+
+

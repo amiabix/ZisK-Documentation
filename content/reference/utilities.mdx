@@ -1,0 +1,171 @@
+# Utilities
+
+Utility functions and helpers provided by ZisK.
+
+## Validation Utilities
+
+### validate()
+
+```typescript
+function validate<T>(data: any, schema: Schema): T
+```
+
+Validates data against a schema.
+
+**Parameters:**
+- `data` - Data to validate
+- `schema` - Validation schema
+
+**Returns:**
+- Validated data of type T
+
+**Example:**
+```typescript
+const schema = {
+  name: String,
+  age: Number,
+}
+
+const user = validate(req.body, schema)
+```
+
+### isValid()
+
+```typescript
+function isValid(data: any, schema: Schema): boolean
+```
+
+Checks if data is valid according to schema.
+
+**Parameters:**
+- `data` - Data to check
+- `schema` - Validation schema
+
+**Returns:**
+- `true` if valid, `false` otherwise
+
+## Transformation Utilities
+
+### transform()
+
+```typescript
+function transform<T, U>(data: T, rules: TransformRules): U
+```
+
+Transforms data using transformation rules.
+
+**Parameters:**
+- `data` - Data to transform
+- `rules` - Transformation rules
+
+**Returns:**
+- Transformed data
+
+**Example:**
+```typescript
+const rules = {
+  name: (value: string) => value.trim().toUpperCase(),
+  age: (value: number) => value * 2,
+}
+
+const transformed = transform(user, rules)
+```
+
+## String Utilities
+
+### slugify()
+
+```typescript
+function slugify(text: string): string
+```
+
+Converts text to URL-friendly slug.
+
+**Example:**
+```typescript
+const slug = slugify('Hello World') // 'hello-world'
+```
+
+### camelCase()
+
+```typescript
+function camelCase(text: string): string
+```
+
+Converts text to camelCase.
+
+**Example:**
+```typescript
+const camel = camelCase('hello world') // 'helloWorld'
+```
+
+### kebabCase()
+
+```typescript
+function kebabCase(text: string): string
+```
+
+Converts text to kebab-case.
+
+**Example:**
+```typescript
+const kebab = kebabCase('Hello World') // 'hello-world'
+```
+
+## Date Utilities
+
+### formatDate()
+
+```typescript
+function formatDate(date: Date, format: string): string
+```
+
+Formats a date according to the specified format.
+
+**Example:**
+```typescript
+const formatted = formatDate(new Date(), 'YYYY-MM-DD')
+```
+
+### parseDate()
+
+```typescript
+function parseDate(dateString: string): Date
+```
+
+Parses a date string into a Date object.
+
+## Array Utilities
+
+### groupBy()
+
+```typescript
+function groupBy<T>(array: T[], key: keyof T): Record<string, T[]>
+```
+
+Groups array items by a key.
+
+**Example:**
+```typescript
+const users = [
+  { name: 'Alice', role: 'admin' },
+  { name: 'Bob', role: 'user' },
+]
+
+const grouped = groupBy(users, 'role')
+// { admin: [{ name: 'Alice', role: 'admin' }], user: [...] }
+```
+
+### unique()
+
+```typescript
+function unique<T>(array: T[]): T[]
+```
+
+Returns array with unique values.
+
+**Example:**
+```typescript
+const unique = unique([1, 2, 2, 3]) // [1, 2, 3]
+```
+

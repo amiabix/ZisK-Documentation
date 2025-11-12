@@ -1,0 +1,68 @@
+# GPU Proof Generation
+
+ZisK supports GPU-accelerated proof generation for significantly improved performance and scalability on NVIDIA hardware.
+
+---
+
+## Prerequisites
+
+**Hardware Requirements:**
+- NVIDIA GPU with CUDA support
+
+**Software Requirements:**
+- [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) installed and configured
+
+## Installation
+
+GPU support must be enabled at compile time. Follow the standard installation process from the [Installation guide](/getting-started/installation) (Option 2: Building from source), replacing the build command with:
+
+```bash
+cargo build --release --features gpu
+```
+
+**Recommended:** Build directly on the target GPU server for architecture-specific optimizations and improved runtime performance.
+
+## Usage
+
+Once built with GPU support, use ZisK commands as normal. The GPU will be automatically utilized during proof generation.
+
+### Using the SDK
+
+You can also configure GPU parameters programmatically using the ZisK SDK when building the prover:
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+use proofman_common::ParamsGPU;
+use std::path::PathBuf;
+
+let mut gpu_params = ParamsGPU::new(true);  // Enable preallocation
+gpu_params.with_max_number_streams(4);
+gpu_params.with_number_threads_pools_witness(8);
+gpu_params.with_max_witness_stored(10);
+
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("program.elf"))
+    .gpu(gpu_params)
+    .build()?;
+```
+
+## Performance Optimization
+
+### Concurrent Processing
+
+Combine GPU execution with multi-process proof generation as described in [Concurrent Proof Generation](/optimization/concurrent-proof-generation).
+
+**Memory Considerations:**
+
+- GPU memory is more limited than CPU memory
+- Each concurrent process requires dedicated GPU memory
+- Monitor GPU memory usage to prevent out-of-memory errors
+- Adjust the number of concurrent processes based on available GPU memory
+
+---
+
+## Next Steps
+
+- **[Concurrent Proof Generation](/optimization/concurrent-proof-generation)** - Learn how to generate proofs in parallel using multiple processes

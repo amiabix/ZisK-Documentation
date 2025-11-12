@@ -1,0 +1,97 @@
+# Docker Deployment
+
+## Overview
+
+This guide covers deploying ZisK's distributed proof generation system using Docker containers. Docker deployment provides consistent environments, easier scaling, and integration with orchestration platforms like Kubernetes and Docker Swarm.
+
+---
+
+## Quick Start
+
+For configuration options, command-line arguments, and troubleshooting, see the [Configuration Guide](/distributed/configuration-guide).
+
+### Step 1: Build the Docker Image
+
+First, build the Docker image from the ZisK repository:
+
+```bash
+docker build -t zisk-distributed:latest -f distributed/Dockerfile .
+```
+
+### Step 2: Create a Network
+
+Create a Docker network for container communication:
+
+```bash
+docker network create zisk-net
+```
+
+### Step 3: Start the Coordinator
+
+Start the coordinator container:
+
+```bash
+docker run -d --rm --name zisk-coordinator \
+  --network zisk-net \
+  -p 50051:50051 \
+  zisk-distributed:latest \
+  zisk-coordinator
+```
+
+### Step 4: Start a Worker
+
+Start a worker container (replace paths with your actual directories):
+
+```bash
+docker run -d --rm --name zisk-worker-1 \
+  --network zisk-net --shm-size=20g \
+  -v /path/to/elf:/app/elf:ro \
+  -v /path/to/inputs:/app/inputs:ro \
+  -v $HOME/.zisk/cache:/app/cache:rw \
+  -v $PROVING_KEY_DIR:/app/proving-key:ro \
+  zisk-distributed:latest \
+  zisk-worker --coordinator-url http://zisk-coordinator:50051 \
+    --elf /app/elf/program.elf \
+    --inputs-folder /app/inputs \
+    --proving-key /app/proving-key
+```
+
+### Step 5: Generate a Proof
+
+Submit a proof generation request:
+
+```bash
+docker exec -it zisk-coordinator \
+  zisk-coordinator prove --input input.bin --compute-capacity 10
+```
+
+## Configuration
+
+Mount TOML configuration files as volumes or use environment variables. For configuration options, see the [Configuration Guide](/distributed/configuration-guide).
+
+```bash
+docker run -v /path/to/config:/app/config zisk-distributed:latest \
+  zisk-coordinator --config /app/config/coordinator.toml
+```
+
+
+## Advanced Deployment
+
+### Building Custom Images
+
+```bash
+# CPU-only build
+docker build -t zisk-distributed:latest -f distributed/Dockerfile .
+
+# GPU-enabled build
+docker build --build-arg GPU=true -t zisk-distributed:gpu -f distributed/Dockerfile .
+```
+
+---
+
+## Next Steps
+
+Ready to deploy distributed proving? Continue to:
+
+- **[Manual Deployment](/distributed/manual-deployment)** - For development and testing
+- **[Configuration Guide](/distributed/configuration-guide)** - Configuration options, command-line arguments, and troubleshooting

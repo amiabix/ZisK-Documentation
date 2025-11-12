@@ -1,0 +1,91 @@
+# Components
+
+Detailed documentation of ZisK components.
+
+## Core Components
+
+### Engine
+
+The main execution engine that orchestrates all operations.
+
+**Properties:**
+- `config: ZisKConfig` - Configuration object
+- `plugins: Plugin[]` - Loaded plugins
+- `middleware: Middleware[]` - Registered middleware
+
+**Methods:**
+- `start(): Promise<void>` - Start the engine
+- `stop(): Promise<void>` - Stop the engine
+- `use(plugin: Plugin): void` - Register a plugin
+
+### Router
+
+Handles request routing and URL matching.
+
+**Methods:**
+- `get(path: string, handler: Handler): void` - Register GET route
+- `post(path: string, handler: Handler): void` - Register POST route
+- `put(path: string, handler: Handler): void` - Register PUT route
+- `delete(path: string, handler: Handler): void` - Register DELETE route
+
+### Middleware
+
+Middleware components for request/response processing.
+
+**Types:**
+- `RequestMiddleware` - Processes incoming requests
+- `ResponseMiddleware` - Processes outgoing responses
+- `ErrorMiddleware` - Handles errors
+
+### Plugin Manager
+
+Manages plugin lifecycle and dependencies.
+
+**Methods:**
+- `load(plugin: Plugin): Promise<void>` - Load a plugin
+- `unload(plugin: Plugin): Promise<void>` - Unload a plugin
+- `get(name: string): Plugin | undefined` - Get plugin by name
+
+## Utility Components
+
+### Validator
+
+Validates data against schemas.
+
+```typescript
+const validator = new Validator()
+const result = validator.validate(data, schema)
+```
+
+### Transformer
+
+Transforms data between formats.
+
+```typescript
+const transformer = new Transformer()
+const transformed = transformer.transform(data, rules)
+```
+
+### Cache
+
+Provides caching functionality.
+
+```typescript
+const cache = new Cache({ ttl: 3600 })
+await cache.set('key', value)
+const value = await cache.get('key')
+```
+
+## Component Relationships
+
+```
+Engine
+├── Router
+├── Middleware
+├── Plugin Manager
+│   └── Plugins
+├── Validator
+├── Transformer
+└── Cache
+```
+

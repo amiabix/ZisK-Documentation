@@ -1,0 +1,156 @@
+# API Reference
+
+Complete API documentation for all ZisK classes and methods.
+
+## ZisK Class
+
+Main application class.
+
+### Constructor
+
+```typescript
+new ZisK(config?: ZisKConfig)
+```
+
+Creates a new ZisK instance.
+
+**Parameters:**
+- `config` (optional) - Configuration object
+
+**Example:**
+```typescript
+const app = new ZisK({
+  port: 3000,
+  environment: 'development',
+})
+```
+
+### Methods
+
+#### start()
+
+```typescript
+start(): Promise<void>
+```
+
+Starts the ZisK application.
+
+**Example:**
+```typescript
+await app.start()
+```
+
+#### stop()
+
+```typescript
+stop(): Promise<void>
+```
+
+Stops the ZisK application.
+
+**Example:**
+```typescript
+await app.stop()
+```
+
+#### use()
+
+```typescript
+use(middleware: Middleware | Plugin): void
+```
+
+Registers middleware or plugin.
+
+**Parameters:**
+- `middleware` - Middleware function or plugin instance
+
+**Example:**
+```typescript
+app.use(async (req, res, next) => {
+  console.log('Request:', req.url)
+  await next()
+})
+```
+
+## Router Class
+
+Handles request routing.
+
+### Methods
+
+#### get()
+
+```typescript
+get(path: string, handler: Handler): void
+```
+
+Registers a GET route.
+
+**Parameters:**
+- `path` - Route path
+- `handler` - Request handler function
+
+**Example:**
+```typescript
+router.get('/users', async (req, res) => {
+  res.json({ users: [] })
+})
+```
+
+#### post()
+
+```typescript
+post(path: string, handler: Handler): void
+```
+
+Registers a POST route.
+
+**Parameters:**
+- `path` - Route path
+- `handler` - Request handler function
+
+**Example:**
+```typescript
+router.post('/users', async (req, res) => {
+  const user = await createUser(req.body)
+  res.json({ user })
+})
+```
+
+#### put()
+
+```typescript
+put(path: string, handler: Handler): void
+```
+
+Registers a PUT route.
+
+#### delete()
+
+```typescript
+delete(path: string, handler: Handler): void
+```
+
+Registers a DELETE route.
+
+## Middleware Interface
+
+```typescript
+interface Middleware {
+  (req: Request, res: Response, next: NextFunction): Promise<void> | void
+}
+```
+
+Middleware function signature.
+
+## Plugin Interface
+
+```typescript
+interface Plugin {
+  name: string
+  setup(app: ZisK): void | Promise<void>
+}
+```
+
+Plugin interface.
+
