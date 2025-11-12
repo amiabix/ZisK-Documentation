@@ -1,25 +1,35 @@
-# ZisK Docs
+# ZisK Documentation
 
-A clean, minimalistic, and modern documentation site built with Next.js and Nextra.
+Documentation site for ZisK, a zero-knowledge virtual machine (zkVM) for generating cryptographic proofs of program execution. Built with Next.js and Nextra.
 
-## Features
+## Overview
 
-- Clean, professional design inspired by Vercel Docs, Supabase Docs, and Nomic AI Docs
-- Dark mode support with smooth transitions
-- Auto-generated sidebar from `_meta.json` files
-- Responsive design for desktop, tablet, and mobile
-- SEO optimized with customizable title templates
-- Static export ready for deployment
+This repository contains the complete documentation for ZisK, including installation guides, developer documentation, API references, and optimization guides. The documentation is built using Next.js and Nextra, providing a modern, responsive interface with automatic sidebar generation and static export capabilities.
 
-## Getting Started
+## Technology Stack
+
+- **Next.js**: React framework for production
+- **Nextra**: Documentation framework built on Next.js
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **MDX**: Markdown with JSX support
+
+## Development
+
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm or yarn package manager
 
 ### Installation
+
+Install project dependencies:
 
 ```bash
 npm install
 ```
 
-### Development
+### Local Development
 
 Start the development server:
 
@@ -27,103 +37,133 @@ Start the development server:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+The documentation will be available at `http://localhost:3000`.
 
-### Build
+### Building for Production
 
-Build for production:
+Generate a production build:
 
 ```bash
 npm run build
 ```
 
-### Export
+### Static Export
 
-Generate static export:
+Generate static files for deployment:
 
 ```bash
 npm run export
 ```
 
-The static files will be in the `out` directory, ready for deployment to Vercel, GitHub Pages, or any static hosting service.
+Static files are output to the `out` directory and can be deployed to any static hosting service.
 
 ## Project Structure
 
 ```
 zisk-docs/
-├── pages/              # Documentation pages (routes)
-│   ├── getting-started/ # Getting started guides
-│   ├── developer/       # Developer documentation
-│   ├── distributed/     # Distributed proof generation
-│   ├── optimization/    # Optimization guides
-│   └── reference/       # API reference
-├── content/            # Content source (organized structure)
-│   ├── architecture/   # Architecture content
-│   └── reference/      # API reference content
-├── public/             # Static assets
-│   └── logo.svg       # Project logo
-├── styles/             # Global styles
-│   └── globals.css     # Tailwind CSS and custom styles
-├── theme.config.tsx    # Nextra theme configuration
-├── next.config.js      # Next.js configuration
-└── tailwind.config.js  # Tailwind CSS configuration
+├── pages/                  # Documentation pages (Nextra routes)
+│   ├── getting-started/    # Installation and quickstart guides
+│   ├── developer/          # Developer documentation
+│   ├── distributed/        # Distributed proof generation
+│   ├── optimization/       # Performance optimization guides
+│   └── reference/          # API reference and utilities
+├── content/                # Legacy content structure
+├── public/                 # Static assets (images, logos)
+├── styles/                 # Global styles and Tailwind configuration
+├── components/             # React components
+├── scripts/                # Build and utility scripts
+├── theme.config.tsx        # Nextra theme configuration
+├── next.config.js          # Next.js configuration
+└── tailwind.config.js      # Tailwind CSS configuration
 ```
 
-Note: Nextra reads documentation from the `pages` directory. The `content` directory serves as an organizational structure. Documentation files (`.mdx`) should be placed in `pages` for Nextra to process them.
+## Documentation Organization
+
+Documentation pages are organized in the `pages` directory. Each section uses `_meta.tsx` files to define sidebar navigation structure. Pages are written in MDX format, allowing for React components and interactive elements.
+
+### Navigation Structure
+
+Sidebar navigation is automatically generated from `_meta.tsx` files in each directory:
+
+```typescript
+export default {
+  'getting-started': 'Getting Started',
+  'developer': 'Developer Guide',
+  'reference': 'Reference',
+}
+```
 
 ## Configuration
 
 ### Theme Configuration
 
-Edit `theme.config.tsx` to customize:
+The `theme.config.tsx` file contains:
 
-- Logo and branding
+- Logo and branding settings
 - GitHub repository links
-- Footer text
-- Search placeholder
-- Primary color hue
-- SEO settings
-
-### Content Organization
-
-Documentation pages are organized in the `pages` directory. Each section can have a `_meta.json` file to control sidebar navigation:
-
-```json
-{
-  "index": "Overview",
-  "getting-started": "Getting Started",
-  "configuration": "Configuration"
-}
-```
+- Footer configuration
+- SEO metadata and Open Graph tags
+- Search configuration
 
 ### Styling
 
-Global styles are in `styles/globals.css`. Tailwind CSS is configured in `tailwind.config.js`.
+Global styles are defined in `styles/globals.css`. Tailwind CSS utilities are configured in `tailwind.config.js`. The design uses a minimal color palette with Victorian Peak (#007755) as the primary accent color.
+
+### SEO Configuration
+
+Per-page metadata is configured in `theme.config.tsx`, including:
+
+- Meta descriptions
+- Canonical URLs
+- Open Graph tags
+- Twitter Card metadata
+- Schema.org JSON-LD markup
+
+Sitemap generation is handled by `scripts/generate-sitemap.js` and outputs to `public/sitemap.xml`.
 
 ## Deployment
 
 ### Vercel
 
-The easiest way to deploy is using [Vercel](https://vercel.com):
+Recommended deployment platform:
 
-1. Push your code to GitHub
-2. Import your repository in Vercel
-3. Vercel will automatically detect Next.js and deploy
+1. Push code to GitHub
+2. Import repository in Vercel
+3. Vercel automatically detects Next.js configuration
+4. Deployment occurs on every push to main branch
 
-### GitHub Pages
+### Static Hosting
 
-1. Build and export the site:
-   ```bash
-   npm run export
-   ```
+For static hosting services (GitHub Pages, Netlify, etc.):
 
-2. Deploy the `out` directory to GitHub Pages
+1. Run `npm run export`
+2. Deploy the `out` directory contents
+3. Configure the hosting service to serve from the root directory
 
-### Other Static Hosting
+### Environment Variables
 
-The `out` directory contains all static files needed for deployment to any static hosting service.
+No environment variables are required for basic deployment. All configuration is handled through `theme.config.tsx` and `next.config.js`.
+
+## Content Guidelines
+
+Documentation follows these principles:
+
+- **Clarity**: Clear, concise explanations without unnecessary verbosity
+- **Accuracy**: Technical details verified against implementation
+- **Completeness**: Comprehensive coverage of features and use cases
+- **Professional tone**: Formal language without marketing terminology
+- **Code examples**: Working examples with proper error handling
+
+## Contributing
+
+Documentation improvements should:
+
+1. Maintain consistency with existing style and structure
+2. Follow the established formatting guidelines
+3. Include code examples where applicable
+4. Update related documentation when adding new features
+5. Verify all links and code examples before submitting
 
 ## License
 
 ISC
-
