@@ -3,12 +3,14 @@ const withNextra = require('nextra').default({
   themeConfig: './theme.config.tsx',
 })
 
-module.exports = withNextra({
+const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
   },
   trailingSlash: false,
   poweredByHeader: false,
-})
+}
+
+module.exports = withNextra(nextConfig)
 
