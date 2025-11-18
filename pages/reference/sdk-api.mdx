@@ -1,0 +1,477 @@
+# SDK API Reference
+
+Complete reference for all SDK methods and types.
+
+## ProverClientBuilder
+
+Main entry point for creating provers.
+
+### Creating a Builder
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+
+let builder = ProverClientBuilder::new();
+```
+
+---
+
+## Backend Selection Methods
+
+### `emu() -> ProverClientBuilder<EmuB, ()>`
+
+Configure for emulator backend.
+
+**Availability:** Initial state only
+
+```rust
+let builder = ProverClientBuilder::new().emu();
+```
+
+### `asm() -> ProverClientBuilder<AsmB, ()>`
+
+Configure for assembly backend.
+
+**Availability:** Initial state only
+
+```rust
+let builder = ProverClientBuilder::new().asm();
+```
+
+---
+
+## Operation Selection Methods
+
+### `witness() -> ProverClientBuilder<Backend, WitnessGeneration>`
+
+Configure for program execution without constraint verification.
+
+**Availability:** After backend selection
+
+**Available prover methods:** `.execute()`, `.stats()`
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .witness()
+    .elf_path(elf_path)
+    .build()?;
+```
+
+### `verify_constraints() -> ProverClientBuilder<Backend, WitnessGeneration>`
+
+Configure for constraint verification.
+
+**Availability:** After backend selection
+
+**Available prover methods:** `.verify_constraints()`, `.verify_constraints_debug()`
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .verify_constraints()
+    .elf_path(elf_path)
+    .build()?;
+```
+
+### `prove() -> ProverClientBuilder<Backend, Prove>`
+
+Configure for proof generation.
+
+**Availability:** After backend selection
+
+**Available prover methods:** `.prove()`
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(elf_path)
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+```
+
+---
+
+## Configuration Methods
+
+### Common Configuration
+
+Available for all backends and operations.
+
+#### `elf_path(path: PathBuf) -> Self`
+
+Set path to ELF file.
+
+**Required:** Yes
+
+```rust
+.elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+```
+
+#### `witness_lib_path(path: PathBuf) -> Self`
+
+Set custom witness library path.
+
+**Default:** `$HOME/.zisk/bin/libzisk_witness.{so,dylib}`
+
+```rust
+.witness_lib_path(PathBuf::from("/custom/path/libzisk_witness.so"))
+```
+
+#### `proving_key_path(path: PathBuf) -> Self`
+
+Set custom proving key directory.
+
+**Default:** `$HOME/.zisk/provingKey`
+
+```rust
+.proving_key_path(PathBuf::from("/custom/path/provingKey"))
+```
+
+#### `verbose(level: u8) -> Self`
+
+Set verbosity level (0-4).
+
+**Default:** 0
+
+```rust
+.verbose(2)
+```
+
+#### `shared_tables(enable: bool) -> Self`
+
+Enable shared tables for cluster deployments.
+
+**Default:** false
+
+```rust
+.shared_tables(true)
+```
+
+---
+
+### Proof-Specific Configuration
+
+Only available when using `.prove()`.
+
+#### `output_dir(path: PathBuf) -> Self`
+
+Set output directory for proof files.
+
+**Required:** Yes (for `.prove()`)
+
+```rust
+.output_dir(PathBuf::from("proof"))
+```
+
+#### `aggregation(enable: bool) -> Self`
+
+Enable proof aggregation.
+
+**Default:** true
+
+```rust
+.aggregation(true)
+```
+
+#### `final_snark(enable: bool) -> Self`
+
+Generate final SNARK proof.
+
+**Default:** false
+
+```rust
+.final_snark(true)
+```
+
+#### `rma(enable: bool) -> Self`
+
+Use Remote Memory Access.
+
+**Default:** true
+
+```rust
+.rma(true)
+```
+
+#### `verify_proofs(enable: bool) -> Self`
+
+Verify proof after generation.
+
+**Default:** false
+
+```rust
+.verify_proofs(true)
+```
+
+#### `minimal_memory(enable: bool) -> Self`
+
+Use minimal memory mode.
+
+**Default:** false
+
+```rust
+.minimal_memory(true)
+```
+
+#### `save_proofs(enable: bool) -> Self`
+
+Save proof files to disk.
+
+**Default:** false
+
+```rust
+.save_proofs(true)
+```
+
+#### `gpu(params: ParamsGPU) -> Self`
+
+Configure GPU acceleration.
+
+```rust
+use proofman_common::ParamsGPU;
+
+let mut gpu_params = ParamsGPU::new(true);
+gpu_params.with_max_number_streams(4);
+gpu_params.with_number_threads_pools_witness(8);
+gpu_params.with_max_witness_stored(10);
+.gpu(gpu_params)
+```
+
+---
+
+### Assembly-Specific Configuration
+
+Only available when using `.asm()`.
+
+#### `asm_path(path: PathBuf) -> Self`
+
+Set custom ASM file path.
+
+**Default:** Auto-detected from ELF path
+
+```rust
+.asm_path(PathBuf::from("custom-asm.bin"))
+```
+
+#### `base_port(port: u16) -> Self`
+
+Set base port for ASM microservices.
+
+**Default:** 23115
+
+```rust
+.base_port(23115)
+```
+
+#### `unlock_mapped_memory(enable: bool) -> Self`
+
+Unlock memory map for ROM file.
+
+**Default:** false
+
+```rust
+.unlock_mapped_memory(true)
+```
+
+---
+
+## Prover Methods
+
+Methods available on the built prover.
+
+### `execute(stdin: ZiskStdin) -> Result<ZiskExecuteResult>`
+
+Execute program without generating proof.
+
+**Availability:** When using `.witness()`
+
+```rust
+let result = prover.execute(stdin)?;
+println!("Executed {} steps", result.execution.executed_steps);
+```
+
+### `stats(stdin: ZiskStdin, debug_info: Option<Option<String>>, mpi_node: Option<u32>) -> Result<(i32, i32, Option<ExecutorStats>)>`
+
+Get execution statistics.
+
+**Availability:** When using `.witness()`
+
+```rust
+let (world_rank, n_processes, stats) = prover.stats(stdin, None, None)?;
+if let Some(stats) = stats {
+    println!("Total cost: {:?}", stats.total_cost);
+}
+```
+
+### `verify_constraints(stdin: ZiskStdin) -> Result<ZiskVerifyConstraintsResult>`
+
+Verify that all constraints are satisfied.
+
+**Availability:** When using `.verify_constraints()`
+
+```rust
+let result = prover.verify_constraints(stdin)?;
+println!("Duration: {:?}", result.duration);
+```
+
+### `verify_constraints_debug(stdin: ZiskStdin, debug_info: Option<Option<String>>) -> Result<ZiskVerifyConstraintsResult>`
+
+Verify constraints with debug information.
+
+**Availability:** When using `.verify_constraints()`
+
+```rust
+let result = prover.verify_constraints_debug(stdin, Some(None))?;
+```
+
+### `prove(stdin: ZiskStdin) -> Result<ZiskProveResult>`
+
+Generate a proof.
+
+**Availability:** When using `.prove()`
+
+```rust
+let result = prover.prove(stdin)?;
+println!("Proof ID: {:?}", result.proof.id);
+println!("Duration: {:?}", result.duration);
+```
+
+### `world_rank() -> i32`
+
+Get MPI world rank (0 if not using MPI).
+
+```rust
+if prover.world_rank() == 0 {
+    // Only rank 0 should save results
+}
+```
+
+### `local_rank() -> i32`
+
+Get MPI local rank (0 if not using MPI).
+
+### `executed_steps() -> u64`
+
+Get number of executed steps after execution or proof generation.
+
+---
+
+## Types
+
+### ZiskExecuteResult
+
+Result from program execution.
+
+```rust
+pub struct ZiskExecuteResult {
+    pub execution: ZiskExecutionResult,
+    pub duration: Duration,
+}
+```
+
+### ZiskVerifyConstraintsResult
+
+Result from constraint verification.
+
+```rust
+pub struct ZiskVerifyConstraintsResult {
+    pub execution: ZiskExecutionResult,
+    pub duration: Duration,
+    pub stats: ExecutorStats,
+}
+```
+
+### ZiskProveResult
+
+Result from proof generation.
+
+```rust
+pub struct ZiskProveResult {
+    pub execution: ZiskExecutionResult,
+    pub duration: Duration,
+    pub stats: ExecutorStats,
+    pub proof: Proof,
+}
+```
+
+### Proof
+
+Proof data structure.
+
+```rust
+pub struct Proof {
+    pub id: Option<String>,
+    pub proof: Option<Vec<u64>>,
+}
+```
+
+### ZiskStdin
+
+Input data for program execution.
+
+```rust
+// Create from file
+let stdin = ZiskStdin::from_file("input.bin")?;
+
+// Create empty input
+let stdin = ZiskStdin::null();
+```
+
+---
+
+## CLI to SDK Mapping
+
+| CLI Flag | SDK Method | Availability |
+|----------|------------|--------------|
+| `-e, --elf` | `.elf_path()` | All operations |
+| `-w, --witness-lib` | `.witness_lib_path()` | All operations |
+| `-k, --proving-key` | `.proving_key_path()` | All operations |
+| `-o, --output-dir` | `.output_dir()` | `.prove()` only |
+| `-a, --aggregation` | `.aggregation(true)` | `.prove()` only |
+| `-f, --final-snark` | `.final_snark(true)` | `.prove()` only |
+| `-y, --verify-proofs` | `.verify_proofs(true)` | `.prove()` only |
+| `-r, --rma` | `.rma(true)` | `.prove()` only |
+| `-m, --minimal-memory` | `.minimal_memory(true)` | `.prove()` only |
+| `-b, --save-proofs` | `.save_proofs(true)` | `.prove()` only |
+| `-j, --shared-tables` | `.shared_tables(true)` | All operations |
+| `-v, -vv, -vvv` | `.verbose(0-4)` | All operations |
+| `-l, --emulator` | `.emu()` | Initial state |
+| `-s, --asm` | `.asm()` | Initial state |
+| `-p, --port` | `.base_port()` | `.asm()` only |
+| `-u, --unlock-mapped-memory` | `.unlock_mapped_memory(true)` | `.asm()` only |
+| `-z, --preallocate` | `.gpu(ParamsGPU::new(true))` | `.prove()` only |
+| `-t, --max-streams` | `.gpu(params.with_max_number_streams())` | `.prove()` only |
+| `-n, --number-threads-witness` | `.gpu(params.with_number_threads_pools_witness())` | `.prove()` only |
+| `-x, --max-witness-stored` | `.gpu(params.with_max_witness_stored())` | `.prove()` only |
+
+---
+
+## Backend Comparison
+
+| Feature | Emulator (`.emu()`) | Assembly (`.asm()`) |
+|---------|---------------------|---------------------|
+| Platforms | Linux, macOS | Linux only |
+| Performance | Standard | Optimized |
+| Setup | Simple | Requires ASM files |
+| Use Case | Development, macOS | Production |
+
+---
+
+## Operation Comparison
+
+| Operation | Method | Available Prover Methods |
+|-----------|--------|--------------------------|
+| Execution | `.witness()` | `.execute()`, `.stats()` |
+| Verification | `.verify_constraints()` | `.verify_constraints()`, `.verify_constraints_debug()` |
+| Proof | `.prove()` | `.prove()` |
+
+---
+
+## Related Documentation
+
+- [SDK Overview](/reference/sdk-overview) - Getting started
+- [SDK Examples](/reference/sdk-examples) - Usage examples
+
+

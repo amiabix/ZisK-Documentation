@@ -8,5 +8,7 @@ module.exports = withNextra({
   images: {
     unoptimized: true,
   },
+  trailingSlash: false,
+  poweredByHeader: false,
 })
 

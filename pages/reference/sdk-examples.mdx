@@ -1,0 +1,266 @@
+# SDK Examples
+
+Practical examples for common SDK usage patterns.
+
+## Basic Proof Generation
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+use zisk_common::io::ZiskStdin;
+use std::path::PathBuf;
+
+fn main() -> anyhow::Result<()> {
+    let prover = ProverClientBuilder::new()
+        .emu()
+        .prove()
+        .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+        .output_dir(PathBuf::from("proof"))
+        .aggregation(true)
+        .verify_proofs(true)
+        .save_proofs(true)
+        .build()?;
+
+    let stdin = ZiskStdin::from_file("input.bin")?;
+    let result = prover.prove(stdin)?;
+
+    println!("Steps: {}", result.execution.executed_steps);
+    println!("Duration: {:?}", result.duration);
+    
+    if let Some(proof_id) = result.proof.id {
+        println!("Proof ID: {}", proof_id);
+    }
+
+    Ok(())
+}
+```
+
+## Constraint Verification
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .verify_constraints()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.verify_constraints(stdin)?;
+
+println!("Constraints verified");
+println!("Steps: {}", result.execution.executed_steps);
+println!("Duration: {:?}", result.duration);
+```
+
+## Program Execution
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .witness()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.execute(stdin)?;
+
+println!("Program executed {} steps", result.execution.executed_steps);
+```
+
+## Assembly Backend
+
+```rust
+let prover = ProverClientBuilder::new()
+    .asm()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .base_port(23115)
+    .unlock_mapped_memory(true)
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+## GPU Configuration
+
+```rust
+use proofman_common::ParamsGPU;
+
+let mut gpu_params = ParamsGPU::new(true);
+gpu_params.with_max_number_streams(4);
+gpu_params.with_number_threads_pools_witness(8);
+gpu_params.with_max_witness_stored(10);
+
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .gpu(gpu_params)
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+## Error Handling
+
+```rust
+use anyhow::{Context, Result};
+
+fn generate_proof(elf_path: PathBuf, input_path: PathBuf) -> Result<()> {
+    let prover = ProverClientBuilder::new()
+        .emu()
+        .prove()
+        .elf_path(elf_path)
+        .output_dir(PathBuf::from("proof"))
+        .build()
+        .context("Failed to build prover")?;
+
+    let stdin = ZiskStdin::from_file(&input_path)
+        .context("Failed to load input file")?;
+
+    let result = prover.prove(stdin)
+        .context("Proof generation failed")?;
+
+    println!("Proof ID: {:?}", result.proof.id);
+    Ok(())
+}
+```
+
+## Development Workflow
+
+Verify constraints before generating proof:
+
+```rust
+let elf_path = PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program");
+let stdin = ZiskStdin::from_file("input.bin")?;
+
+// First, verify constraints
+let verifier = ProverClientBuilder::new()
+    .emu()
+    .verify_constraints()
+    .elf_path(elf_path.clone())
+    .build()?;
+
+verifier.verify_constraints(stdin.clone())?;
+println!("Constraints verified");
+
+// Then generate proof
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(elf_path)
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+prover.prove(stdin)?;
+```
+
+## Conditional Backend Selection
+
+```rust
+let use_asm = std::env::var("USE_ASM").is_ok();
+
+let mut builder = ProverClientBuilder::new()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"));
+
+let prover = if use_asm {
+    builder.asm()
+        .base_port(23115)
+        .unlock_mapped_memory(true)
+        .output_dir(PathBuf::from("proof"))
+        .build()?
+} else {
+    builder.emu()
+        .output_dir(PathBuf::from("proof"))
+        .build()?
+};
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+## Getting Execution Statistics
+
+```rust
+let prover = ProverClientBuilder::new()
+    .emu()
+    .witness()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let (world_rank, n_processes, stats) = prover.stats(stdin, None, None)?;
+
+if let Some(stats) = stats {
+    println!("Total cost: {:?}", stats.total_cost);
+    println!("Main cost: {:?}", stats.main_cost);
+}
+```
+
+## MPI Usage
+
+```rust
+let prover = ProverClientBuilder::new()
+    .asm()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+// Only rank 0 should save results
+if prover.world_rank() == 0 {
+    let stdin = ZiskStdin::from_file("input.bin")?;
+    let result = prover.prove(stdin)?;
+    println!("Proof generated on rank 0");
+}
+```
+
+## CLI to SDK Conversion
+
+**CLI Command:**
+```bash
+cargo-zisk prove \
+  -e program.elf \
+  -i input.bin \
+  -w libzisk_witness.so \
+  -k provingKey \
+  -o proof_output \
+  -a \
+  -y \
+  -v
+```
+
+**SDK Equivalent:**
+```rust
+use zisk_sdk::ProverClientBuilder;
+use zisk_common::io::ZiskStdin;
+use std::path::PathBuf;
+
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("program.elf"))
+    .witness_lib_path(PathBuf::from("libzisk_witness.so"))
+    .proving_key_path(PathBuf::from("provingKey"))
+    .output_dir(PathBuf::from("proof_output"))
+    .aggregation(true)
+    .verify_proofs(true)
+    .verbose(1)
+    .build()?;
+
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+```
+
+---
+
+## Related Documentation
+
+- [SDK Overview](/reference/sdk-overview) - Getting started
+- [SDK API Reference](/reference/sdk-api) - Complete API documentation
+
+

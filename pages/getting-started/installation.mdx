@@ -1,6 +1,6 @@
 # Installation Guide
 
-ZisK can be installed from prebuilt binaries (recommended) or by building the ZisK tools, toolchain and setup files from source.
+ZisK can be installed from prebuilt binaries (recommended) or by building the ZisK tools, toolchain, and setup files from source.
 
 ## System Requirements
 
@@ -38,7 +38,7 @@ ZisK uses shared memory to exchange data between processes. The system must be c
 $ ulimit -l
 unlimited
 ```
-A way to achieve it is to edit the file `/etc/systemd/system.conf` and add the line `DefaultLimitMEMLOCK=infinity`. Reboot for changes to take effect.
+A way to achieve this is to edit the file `/etc/systemd/system.conf` and add the line `DefaultLimitMEMLOCK=infinity`, then reboot for changes to take effect.
 
 ### macOS
 
@@ -63,7 +63,7 @@ To install ZisK using ziskup, run the following command in your terminal:
 curl https://raw.githubusercontent.com/0xPolygonHermez/zisk/main/ziskup/install.sh | bash
 ```
 
-During the installation, you will be prompted to select a setup option. You can choose from the following:
+During the installation, you will be prompted to select a setup option and you can choose from the following:
 
 - **Install proving key (default)** – Required for generating and verifying proofs.
 - **Install verify key** – Needed only if you want to verify proofs.
@@ -275,4 +275,6 @@ Delete ZisK folder:
 ```bash
 rm -rf $HOME/.zisk
 ```
+---
 
+If you face any issues while installing, feel free to reach out to us on [Discord](https://discord.gg/bh2b7JurXH) with the error and system configuration for prompt support.

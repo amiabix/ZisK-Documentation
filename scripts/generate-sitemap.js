@@ -2,9 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE_URL = 'https://zisk.technology';
-const PAGES_DIR = path.join(__dirname, '../pages');
 
-// Map of page paths to their last modified times (you can update these manually)
 const pages = [
   { path: '', priority: 1.0, changefreq: 'weekly' },
   { path: 'getting-started/installation', priority: 0.9, changefreq: 'monthly' },

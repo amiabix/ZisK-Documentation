@@ -1,168 +1,62 @@
 # ZisK Documentation
 
-Documentation site for ZisK, a zero-knowledge virtual machine (zkVM) for generating cryptographic proofs of program execution. Built with Next.js and Nextra.
+Welcome to the ZisK Documentation repository.
 
-## Overview
+This documentation site provides comprehensive guides for ZisK, a zero-knowledge virtual machine (zkVM) for generating cryptographic proofs of arbitrary program execution. The site is built with Next.js and Nextra, offering a modern, responsive interface with automatic sidebar generation and static export capabilities.
 
-This repository contains the complete documentation for ZisK, including installation guides, developer documentation, API references, and optimization guides. The documentation is built using Next.js and Nextra, providing a modern, responsive interface with automatic sidebar generation and static export capabilities.
+The documentation covers installation guides, developer workflows, API references, optimization techniques, and distributed proof generation. Our goal is to establish a high-quality, curated source of truth for ZisK technology.
 
-## Technology Stack
+The source code for this documentation is available at [https://github.com/amiabix/ZisK-Documentation](https://github.com/amiabix/ZisK-Documentation). The main ZisK project repository is located at [https://github.com/0xPolygonHermez/zisk](https://github.com/0xPolygonHermez/zisk).
 
-- **Next.js**: React framework for production
-- **Nextra**: Documentation framework built on Next.js
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Utility-first CSS framework
-- **MDX**: Markdown with JSX support
-
-## Development
+## Run Locally
 
 ### Prerequisites
 
-- Node.js 18.x or higher
-- npm or yarn package manager
+Node.js 18.x or higher is required. The project uses npm for package management.
 
-### Installation
+### Setup
 
-Install project dependencies:
+Clone the repository and navigate to the root directory. Install dependencies using `npm install`. Once dependencies are installed, start the development server with `npm run dev`.
 
-```bash
-npm install
-```
+The documentation site will be available at `http://localhost:3000`. The development server supports hot reloading, so changes to documentation files will be reflected immediately in the browser.
 
-### Local Development
+### Building for development
 
-Start the development server:
-
-```bash
-npm run dev
-```
-
-The documentation will be available at `http://localhost:3000`.
-
-### Building for Production
-
-Generate a production build:
-
-```bash
-npm run build
-```
-
-### Static Export
-
-Generate static files for deployment:
-
-```bash
-npm run export
-```
-
-Static files are output to the `out` directory and can be deployed to any static hosting service.
+To generate a development build, run `npm run build`. This command generates the sitemap and builds the static site. The output is written to the `out` directory, which can be deployed to any static hosting service.
 
 ## Project Structure
 
-```
-zisk-docs/
-├── pages/                  # Documentation pages (Nextra routes)
-│   ├── getting-started/    # Installation and quickstart guides
-│   ├── developer/          # Developer documentation
-│   ├── distributed/        # Distributed proof generation
-│   ├── optimization/       # Performance optimization guides
-│   └── reference/          # API reference and utilities
-├── content/                # Legacy content structure
-├── public/                 # Static assets (images, logos)
-├── styles/                 # Global styles and Tailwind configuration
-├── components/             # React components
-├── scripts/                # Build and utility scripts
-├── theme.config.tsx        # Nextra theme configuration
-├── next.config.js          # Next.js configuration
-└── tailwind.config.js      # Tailwind CSS configuration
-```
+Documentation pages are organized in the `pages` directory using Nextra's file-based routing. Each section contains MDX files for content and `_meta.tsx` files that define the sidebar navigation structure. The `pages` directory includes sections for getting started guides, developer documentation, distributed proof generation, optimization techniques, and API references.
 
-## Documentation Organization
+Static assets such as images and logos are stored in the `public` directory. Global styles and Tailwind configuration are in the `styles` directory. React components used across the documentation are located in `components`. Build scripts, including sitemap generation, are in the `scripts` directory.
 
-Documentation pages are organized in the `pages` directory. Each section uses `_meta.tsx` files to define sidebar navigation structure. Pages are written in MDX format, allowing for React components and interactive elements.
-
-### Navigation Structure
-
-Sidebar navigation is automatically generated from `_meta.tsx` files in each directory:
-
-```typescript
-export default {
-  'getting-started': 'Getting Started',
-  'developer': 'Developer Guide',
-  'reference': 'Reference',
-}
-```
-
-## Configuration
-
-### Theme Configuration
-
-The `theme.config.tsx` file contains:
-
-- Logo and branding settings
-- GitHub repository links
-- Footer configuration
-- SEO metadata and Open Graph tags
-- Search configuration
-
-### Styling
-
-Global styles are defined in `styles/globals.css`. Tailwind CSS utilities are configured in `tailwind.config.js`. The design uses a minimal color palette with Victorian Peak (#007755) as the primary accent color.
-
-### SEO Configuration
-
-Per-page metadata is configured in `theme.config.tsx`, including:
-
-- Meta descriptions
-- Canonical URLs
-- Open Graph tags
-- Twitter Card metadata
-- Schema.org JSON-LD markup
-
-Sitemap generation is handled by `scripts/generate-sitemap.js` and outputs to `public/sitemap.xml`.
-
-## Deployment
-
-### Vercel
-
-Recommended deployment platform:
-
-1. Push code to GitHub
-2. Import repository in Vercel
-3. Vercel automatically detects Next.js configuration
-4. Deployment occurs on every push to main branch
-
-### Static Hosting
-
-For static hosting services (GitHub Pages, Netlify, etc.):
-
-1. Run `npm run export`
-2. Deploy the `out` directory contents
-3. Configure the hosting service to serve from the root directory
-
-### Environment Variables
-
-No environment variables are required for basic deployment. All configuration is handled through `theme.config.tsx` and `next.config.js`.
-
-## Content Guidelines
-
-Documentation follows these principles:
-
-- **Clarity**: Clear, concise explanations without unnecessary verbosity
-- **Accuracy**: Technical details verified against implementation
-- **Completeness**: Comprehensive coverage of features and use cases
-- **Professional tone**: Formal language without marketing terminology
-- **Code examples**: Working examples with proper error handling
+Configuration is handled through `theme.config.tsx` for Nextra theme settings, SEO metadata, and branding, and `next.config.js` for Next.js build configuration. The site uses static export mode, generating fully static HTML files suitable for deployment to any static hosting service.
 
 ## Contributing
 
-Documentation improvements should:
+### Getting Started
 
-1. Maintain consistency with existing style and structure
-2. Follow the established formatting guidelines
-3. Include code examples where applicable
-4. Update related documentation when adding new features
-5. Verify all links and code examples before submitting
+Fork the main branch into your own GitHub account and create a feature branch for your changes. Make your changes or additions in your feature branch, ensuring they align with the existing documentation structure and style.
+
+### Contribution Quality
+
+Ensure that your contributions are atomic, well-documented, and tested. Small, self-contained logical updates are preferred over large sweeping changes. Use clear commit messages and explain your changes in the pull request description. Verify that your changes do not break existing functionality and that all code examples work correctly.
+
+Documentation should maintain a professional tone with clear, concise explanations. Technical details must be verified against the actual implementation. Code examples should be complete and include proper error handling where applicable.
+
+### Creating a Pull Request
+
+Once your changes are complete, create a pull request against the main branch of the [ZisK Documentation repository](https://github.com/amiabix/ZisK-Documentation). Your pull request will be reviewed by maintainers, who may request changes or clarifications. Contributors are expected to maintain their contributions over time and update them as necessary to ensure continued accuracy and relevance.
+
+### Best Practices
+
+Stay informed about the latest developments in ZisK technology. Ensure your contributions are coherent with the rest of the documentation and do not overlap or contradict existing content. When adding new features or sections, update related documentation to maintain consistency across the site.
+
+## Deployment
+
+The documentation is configured for static export and can be deployed to any static hosting service. For Vercel, push your code to GitHub and import the repository. Vercel will automatically detect the Next.js configuration and deploy on every push to the main branch.
+
+For other static hosting services, run `npm run build` and deploy the contents of the `out` directory. Configure your hosting service to serve from the root directory. No environment variables are required for basic deployment, though you can optionally set `NEXT_PUBLIC_BASE_URL` to customize the base URL for canonical links and metadata.
 
 ## License
 

@@ -99,7 +99,7 @@ To write public output data, use the `ziskos::set_output()` function. Since the 
 ```rust
 // Split 'hash' value into chunks of 32 bits and write them to ziskos output
 for i in 0..8 {
-    let val = byteorder::BigEndian::read_u32(&mut hash[i * 4..i * 4 + 4]);
+    let val = byteorder::BigEndian::read_u32(&hash[i * 4..i * 4 + 4]);
     set_output(i, val);
 }
 ```
@@ -108,7 +108,7 @@ for i in 0..8 {
 
 Before compiling your program for ZisK, you can test it on the native architecture just like any regular Rust program using the `cargo` command.
 
-Once your program is ready to run on ZisK, compile it into an ELF file (RISC-V architecture), using the `cargo-zisk` CLI tool:
+Once your program is ready to run on ZisK, compile it into an ELF file (RISC-V architecture) using the `cargo-zisk` CLI tool:
 
 ```bash
 cargo-zisk build
@@ -295,9 +295,9 @@ If the process is successful, you should see a message similar to:
 
 ---
 
-## Optimization
+## Related Documentation
 
-To improve proof generation performance:
+- [GPU Proof Generation](/optimization/gpu-proof-generation) – Accelerate proof generation using NVIDIA GPUs.
+- [Concurrent Proof Generation](/optimization/concurrent-proof-generation) – Generate proofs in parallel using multiple processes.
+- [Distributed Proof Generation](/distributed/introduction) – Scale proof generation across multiple machines for large workloads.
 
-- **[GPU Proof Generation](/optimization/gpu-proof-generation)** - Accelerate proof generation with GPU support
-- **[Concurrent Proof Generation](/optimization/concurrent-proof-generation)** - Generate proofs in parallel using multiple processes

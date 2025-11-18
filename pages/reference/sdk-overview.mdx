@@ -1,0 +1,88 @@
+# SDK Overview
+
+The ZisK SDK provides a Rust interface for generating proofs, verifying constraints, and executing programs.
+
+## Installation
+
+Add to `Cargo.toml`:
+
+```toml
+[dependencies]
+zisk-sdk = { git = "https://github.com/0xPolygonHermez/zisk.git" }
+zisk-common = { git = "https://github.com/0xPolygonHermez/zisk.git" }
+anyhow = "1.0"
+```
+
+## Quick Start
+
+Generate a proof:
+
+```rust
+use zisk_sdk::ProverClientBuilder;
+use zisk_common::io::ZiskStdin;
+use std::path::PathBuf;
+
+// Build prover
+let prover = ProverClientBuilder::new()
+    .emu()
+    .prove()
+    .elf_path(PathBuf::from("target/riscv64ima-zisk-zkvm-elf/release/my_program"))
+    .output_dir(PathBuf::from("proof"))
+    .build()?;
+
+// Load input and generate proof
+let stdin = ZiskStdin::from_file("input.bin")?;
+let result = prover.prove(stdin)?;
+println!("Steps: {}", result.execution.executed_steps);
+```
+
+## Concepts
+
+### Builder Pattern
+
+The SDK uses a builder pattern with compile-time type checking:
+
+1. **Backend Selection**: Choose `.emu()` or `.asm()`
+2. **Operation Selection**: Choose `.witness()`, `.verify_constraints()`, or `.prove()`
+3. **Configuration**: Set paths and options
+4. **Build**: Call `.build()` to create the prover
+
+### Backends
+
+**Emulator (`.emu()`)**
+- Works on Linux and macOS
+- No assembly files required
+- Standard performance
+
+**Assembly (`.asm()`)**
+- Linux only
+- Requires pre-generated assembly files
+- Higher performance
+
+### Operations
+
+**Program Execution (`.witness()`)**
+- Executes program without constraint verification
+- Available methods: `.execute()`, `.stats()`
+
+**Constraint Verification (`.verify_constraints()`)**
+- Verifies constraints without generating proof
+- Available methods: `.verify_constraints()`, `.verify_constraints_debug()`
+
+**Proof Generation (`.prove()`)**
+- Generates complete proof
+- Available method: `.prove()`
+
+### Type Safety
+
+The builder enforces type safety at compile time:
+- Backend-specific methods only available with matching backend
+- Operation-specific methods only available with matching operation
+- Invalid configurations fail to compile
+
+## Next Steps
+
+- [API Reference](/reference/sdk-api) - Complete method documentation
+- [Examples](/reference/sdk-examples) - Usage examples and patterns
+
+

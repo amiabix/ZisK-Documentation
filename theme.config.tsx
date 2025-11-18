@@ -1,6 +1,6 @@
 import React from 'react'
 
-const BASE_URL = 'https://zisk.technology'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://zisk.technology'
 
 // Page metadata mapping
 const pageMetadata: Record<string, { description: string; title?: string }> = {
@@ -75,7 +75,7 @@ const config = {
   project: {
     link: 'https://github.com/0xPolygonHermez/zisk',
   },
-  docsRepositoryBase: 'https://github.com/0xPolygonHermez/zisk',
+  docsRepositoryBase: 'https://github.com/amiabix/ZisK-Documentation',
   footer: {
     content: (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
