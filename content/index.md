@@ -51,4 +51,4 @@ For testing and development, use STARK proofs; they generate quickly. For produc
 
 1. **Install**: [Linux](/getting-started/install-linux) or [macOS](/getting-started/install-macos)
 2. **[Quickstart](/getting-started/getting-started-with-zisk)**: create a project and run your first proof in under 5 minutes
-3. **[Write Your First Program](/first-program/project-and-guest)**: a complete tutorial building, running, and proving a Fibonacci program from scratch
+3. **[Writing Programs](/writing-programs/project-setup)**: a complete tutorial building, running, and proving a Fibonacci program from scratch

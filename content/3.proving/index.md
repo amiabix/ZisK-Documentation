@@ -1,6 +1,7 @@
 ---
-title: The Proving Pipeline
-description: "What happens between 'execute' and 'here's your proof', including execution traces, PIL constraints, and the STARK-to-SNARK pipeline."
+title: Proving
+navigation.icon: i-heroicons-shield-check
+description: The proving pipeline, proof types, SDK API, verification, and on-chain verification.
 ---
 
 What happens inside the prover: how ZisK takes a guest program and its input and produces a proof.
@@ -24,13 +25,13 @@ When ZisK runs your guest for proving (or constraint verification), it records e
 The trace is essentially a table. Each row is one step; columns hold the instruction, registers, and memory state. Simple programs produce thousands of rows, complex ones can produce billions.
 
 ```
-Step │ PC     │ Instruction │ Registers...        │ Memory...
-─────┼────────┼─────────────┼─────────────────────┼──────────
-   0 │ 0x1000 │ addi x1, 5  │ x1=5, x2=0, ...    │ ...
-   1 │ 0x1004 │ add x2, x1  │ x1=5, x2=5, ...    │ ...
-   2 │ 0x1008 │ sw x2, 0(sp)│ x1=5, x2=5, ...    │ [sp]=5
-   3 │ 0x100c │ ...         │ ...                 │ ...
-  ...│ ...    │ ...         │ ...                 │ ...
+Step | PC     | Instruction | Registers...        | Memory...
+-----+--------+-------------+---------------------+----------
+   0 | 0x1000 | addi x1, 5  | x1=5, x2=0, ...    | ...
+   1 | 0x1004 | add x2, x1  | x1=5, x2=5, ...    | ...
+   2 | 0x1008 | sw x2, 0(sp)| x1=5, x2=5, ...    | [sp]=5
+   3 | 0x100c | ...         | ...                 | ...
+  ...| ...    | ...         | ...                 | ...
 ```
 
 The prover's job is to convince a verifier that this trace is valid: that it represents a real execution that started with the claimed input and produced the claimed output.
@@ -57,7 +58,7 @@ Proof generation is a multi-stage pipeline, each stage trading proof size for ve
 
 </div>
 
-## Stage 1: VADCOP STARK
+### Stage 1: VADCOP STARK
 
 The first and most fundamental stage produces a STARK proof using **VADCOP** (Verifiable Arithmetic Deterministic Computation Over Polynomials).
 
@@ -67,13 +68,13 @@ STARKs require no trusted setup, are post-quantum secure (hash-based, no ellipti
 
 `.prove().run()` produces a VADCOP STARK by default.
 
-## Stage 2: Compressed Proof
+### Stage 2: Compressed Proof
 
 The compressed stage wraps the STARK in a recursive proof: instead of verifying the large proof directly, you prove *that you verified it*. Since verification is a smaller computation than the original program, the outer proof is smaller.
 
 The result is meaningfully smaller than the raw STARK but still too large for cheap on-chain verification. Useful for proof aggregation or size-sensitive off-chain workflows.
 
-## Stage 3: PLONK SNARK
+### Stage 3: PLONK SNARK
 
 The final stage wraps the compressed proof in a **PLONK SNARK**, a succinct proof system based on elliptic curves. The result is a small constant-size proof, verifiable on-chain in a single transaction.
 
@@ -89,12 +90,6 @@ let result = client.prove(&pk, stdin).compressed().run()?;
 // PLONK SNARK (requires .snark() on the ProverClient builder)
 let result = client.prove(&pk, stdin).plonk().run()?;
 ```
-
-## What the Proof Contains
-
-A proof makes a precise claim: *this program, identified by its verification key, was executed and produced these public values.* It does not contain the input, the execution trace, or the program. Only the mathematical commitments needed for verification.
-
-Verifiers check the math. No re-execution, no trust in the prover, no knowledge of the input required.
 
 ## Proving and Verification Keys
 
@@ -117,8 +112,10 @@ client.verify(result.get_proof(), result.get_publics(), &vk)?;
 
 Setup is expensive. In production, generate keys once and reuse for multiple proofs of the same program. Keys only change when the guest changes.
 
----
+## In This Section
 
-Next: the SDK's proving API in detail. `ProverClient` builder, proof configuration, and verification methods.
-
-[Proving In Depth](/proving-in-depth/prover-client)
+- [Prove and Verify](/proving/prove-and-verify): generate VADCOP, compressed, and PLONK proofs
+- [Proof Types](/proving/proof-types): detailed comparison of all three proof types
+- [ProverClient](/proving/prover-client): the builder API, backends, modes, and advanced options
+- [Verification](/proving/verification): local and programmatic proof verification
+- [On-Chain Verification](/proving/onchain-verification): deploy a Solidity verifier and verify PLONK proofs on Ethereum
