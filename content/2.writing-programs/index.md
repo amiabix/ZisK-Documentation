@@ -1,6 +1,6 @@
 ---
 title: Writing Programs
-navigation.icon: i-heroicons-code-bracket
+navigation: false
 description: The guest/host model, project structure, building, running, and I/O.
 ---
 
@@ -39,6 +39,6 @@ ZisK provides two execution backends:
 ## In This Section
 
 - [Project Setup](/writing-programs/project-setup): project structure, guest anatomy, and dependencies
-- [Build and Run](/writing-programs/build-and-run): compile to RISC-V, run in the emulator, metrics and statistics
+- [Build and Run](/writing-programs/build-and-run): host-driven build, running execute/prove/verify-constraints, metrics
 - [Input and Output](/writing-programs/input-and-output): how data flows between host and guest
 - [Host Program](/writing-programs/host-program): write a host that feeds input, drives execution, and reads results

@@ -1,6 +1,5 @@
 ---
 title: CLI Reference
-navigation.icon: i-heroicons-command-line
 description: Complete reference for all cargo-zisk commands.
 ---
 

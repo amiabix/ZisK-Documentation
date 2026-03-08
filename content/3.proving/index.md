@@ -1,6 +1,6 @@
 ---
 title: Proving
-navigation.icon: i-heroicons-shield-check
+navigation: false
 description: The proving pipeline, proof types, SDK API, verification, and on-chain verification.
 ---
 
@@ -81,14 +81,16 @@ The final stage wraps the compressed proof in a **PLONK SNARK**, a succinct proo
 Proof type is selected through the prove builder:
 
 ```rust
+let proof_opts = ProofOpts::default().minimal_memory();
+
 // VADCOP STARK (default)
-let result = client.prove(&pk, stdin).run()?;
+let result = client.prove(&pk, stdin).with_proof_options(proof_opts).run()?;
 
 // Compressed STARK
-let result = client.prove(&pk, stdin).compressed().run()?;
+let result = client.prove(&pk, stdin).with_proof_options(proof_opts).compressed().run()?;
 
 // PLONK SNARK (requires .snark() on the ProverClient builder)
-let result = client.prove(&pk, stdin).plonk().run()?;
+let result = client.prove(&pk, stdin).with_proof_options(proof_opts).plonk().run()?;
 ```
 
 ## Proving and Verification Keys
@@ -104,10 +106,14 @@ The vk is derived from the guest program. Different program, different vk. A pro
 let (pk, vk) = client.setup(&ELF)?;
 
 // Generate a proof using the proving key
-let result = client.prove(&pk, stdin).run()?;
+let proof_opts = ProofOpts::default().minimal_memory();
+let result = client.prove(&pk, stdin).with_proof_options(proof_opts).run()?;
 
 // Verify the proof using the verification key
 client.verify(result.get_proof(), result.get_publics(), &vk)?;
+
+// Alternative: use the vk embedded in the proof result
+client.verify(result.get_proof(), result.get_publics(), result.get_program_vk())?;
 ```
 
 Setup is expensive. In production, generate keys once and reuse for multiple proofs of the same program. Keys only change when the guest changes.

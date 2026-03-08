@@ -1,6 +1,6 @@
 ---
 title: Optimization
-navigation.icon: i-heroicons-bolt
+navigation: false
 description: Precompiles, GPU acceleration, distributed proving, and precompile hints.
 ---
 
