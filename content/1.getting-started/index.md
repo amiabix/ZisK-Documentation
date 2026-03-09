@@ -4,13 +4,13 @@ navigation: false
 ---
 
 ::callout{to="/getting-started/install-linux"}
-**Install on Linux** -- Full platform with all proving backends, GPU acceleration, and distributed proving.
+**Install on Linux**. Full platform with all proving backends, GPU acceleration, and distributed proving.
 ::
 
 ::callout{to="/getting-started/install-macos"}
-**Install on macOS** -- Development setup with emulator backend.
+**Install on macOS**. Development setup with emulator backend.
 ::
 
 ::callout{to="/getting-started/getting-started-with-zisk"}
-**Quickstart** -- Create a project, write a Fibonacci program, and generate a proof.
+**Quickstart**. Scaffold a project, run it, and generate a proof in under five minutes.
 ::

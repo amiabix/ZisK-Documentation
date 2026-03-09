@@ -38,7 +38,10 @@ ZisK provides two execution backends:
 
 ## In This Section
 
-- [Project Setup](/writing-programs/project-setup): project structure, guest anatomy, and dependencies
-- [Build and Run](/writing-programs/build-and-run): host-driven build, running execute/prove/verify-constraints, metrics
+- [Project Setup](/writing-programs/project-setup): create a project, write the fibonacci guest
+- [Build and Run](/writing-programs/build-and-run): build script, host program, execute your guest, profiling tools
 - [Input and Output](/writing-programs/input-and-output): how data flows between host and guest
-- [Host Program](/writing-programs/host-program): write a host that feeds input, drives execution, and reads results
+- [Prove and Verify](/writing-programs/prove-and-verify): add proving and verification to `main.rs`
+- [Proof Types](/writing-programs/proof-types): VADCOP, compressed, and PLONK proofs
+- [On-Chain Verification](/writing-programs/onchain-verification): verify proofs on Ethereum
+- [Fibonacci Example](/writing-programs/fibonacci-example): complete assembled code in one place
