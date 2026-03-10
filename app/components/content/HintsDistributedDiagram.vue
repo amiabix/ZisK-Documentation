@@ -101,7 +101,7 @@
   --hover-relay-stroke: #888;
   --hover-worker-stroke: #77aadd;
   --hover-worker-shadow: rgba(85,136,187,0.3);
-  max-width: 740px;
+  max-width: 620px;
   margin: 1.5rem auto;
 }
 .hd-diagram svg { overflow: visible; }

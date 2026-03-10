@@ -68,7 +68,7 @@
   --hover-invisible-stroke: #777;
   --hover-invisible-shadow: rgba(100,100,100,0.25);
 
-  max-width: 680px;
+  max-width: 580px;
   margin: 1.5rem auto;
 }
 .td-diagram svg { overflow: visible; }

@@ -130,7 +130,7 @@
   --hover-proof-stroke: #6c6;
   --hover-proof-shadow: rgba(68,170,136,0.3);
   --hover-verify-stroke: #888;
-  max-width: 780px;
+  max-width: 620px;
   margin: 1.5rem auto;
 }
 .mp-diagram svg { overflow: visible; }

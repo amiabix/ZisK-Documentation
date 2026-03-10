@@ -75,7 +75,7 @@
   --hover-host-shadow: rgba(85,136,187,0.3);
   --hover-guest-stroke: #6c6;
   --hover-guest-shadow: rgba(68,170,136,0.3);
-  max-width: 700px;
+  max-width: 580px;
   margin: 1.5rem auto;
 }
 .ioo-diagram svg { overflow: visible; }

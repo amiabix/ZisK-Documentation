@@ -137,7 +137,7 @@
   --hover-artifact-stroke: #888;
   --hover-guest-stroke: #6c6;
   --hover-guest-shadow: rgba(68,170,136,0.4);
-  max-width: 700px;
+  max-width: 620px;
   margin: 1.5rem auto;
 }
 .brf-diagram svg { overflow: visible; }
