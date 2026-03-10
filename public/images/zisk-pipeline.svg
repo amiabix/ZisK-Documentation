@@ -1,0 +1,97 @@
+<svg width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width: 420px; background-color: transparent;" viewBox="0 0 420 580">
+  <style>
+    .box { fill: #2d2d2d; stroke: #888; stroke-width: 1px; rx: 4; ry: 4; transition: all 0.25s ease; }
+    .box-highlight { fill: #1a2e1a; stroke: #4a8; stroke-width: 1.5px; rx: 4; ry: 4; transition: all 0.25s ease; }
+    .label { fill: #ccc; font-family: "trebuchet ms", verdana, arial, sans-serif; font-size: 15px; text-anchor: middle; dominant-baseline: central; transition: fill 0.25s ease; }
+    .sublabel { fill: #999; font-family: "trebuchet ms", verdana, arial, sans-serif; font-size: 11.5px; text-anchor: middle; dominant-baseline: central; transition: fill 0.25s ease; }
+    .edge-label { fill: #aaa; font-family: "trebuchet ms", verdana, arial, sans-serif; font-size: 12px; text-anchor: start; dominant-baseline: central; }
+    .arrow { stroke: lightgrey; stroke-width: 1.5px; fill: none; }
+    .arrowhead { fill: lightgrey; }
+    .input-box { fill: #1f2020; stroke: #666; stroke-width: 1px; stroke-dasharray: 4,3; rx: 4; ry: 4; }
+    .input-label { fill: #999; font-family: "trebuchet ms", verdana, arial, sans-serif; font-size: 13px; text-anchor: middle; dominant-baseline: central; }
+
+    /* Hover glow for step groups */
+    .step { cursor: pointer; }
+    .step:hover .box { stroke: #4a8; stroke-width: 1.5px; filter: drop-shadow(0 0 6px rgba(68, 170, 136, 0.4)); }
+    .step:hover .box-highlight { stroke: #6c6; stroke-width: 2px; filter: drop-shadow(0 0 8px rgba(102, 204, 102, 0.5)); }
+    .step:hover .label { fill: #fff; }
+    .step:hover .sublabel { fill: #bbb; }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 z" class="arrowhead"/>
+    </marker>
+  </defs>
+
+  <!-- Step 1: Guest Source -->
+  <g class="step">
+    <rect class="box" x="110" y="20" width="200" height="50"/>
+    <text class="label" x="210" y="39">Guest Program</text>
+    <text class="sublabel" x="210" y="56">guest/src/main.rs</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line class="arrow" x1="210" y1="70" x2="210" y2="110" marker-end="url(#arrowhead)"/>
+  <text class="edge-label" x="222" y="92">cargo-zisk build</text>
+
+  <!-- Step 2: RISC-V ELF -->
+  <g class="step">
+    <rect class="box" x="110" y="112" width="200" height="50"/>
+    <text class="label" x="210" y="131">RISC-V ELF</text>
+    <text class="sublabel" x="210" y="148">target/.../sha_hasher</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <line class="arrow" x1="210" y1="162" x2="210" y2="218" marker-end="url(#arrowhead)"/>
+  <text class="edge-label" x="222" y="192">ziskemu -e elf -i input</text>
+
+  <!-- Input box (feeds into execute) -->
+  <rect class="input-box" x="16" y="195" width="120" height="40"/>
+  <text class="input-label" x="76" y="216">input.bin</text>
+  <line class="arrow" x1="136" y1="215" x2="170" y2="240" marker-end="url(#arrowhead)" stroke-dasharray="4,3"/>
+
+  <!-- Step 3: Execute -->
+  <g class="step">
+    <rect class="box" x="110" y="220" width="200" height="50"/>
+    <text class="label" x="210" y="239">Execute</text>
+    <text class="sublabel" x="210" y="256">run in VM, verify correctness</text>
+  </g>
+
+  <!-- Arrow 4 -->
+  <line class="arrow" x1="210" y1="270" x2="210" y2="310" marker-end="url(#arrowhead)"/>
+  <text class="edge-label" x="222" y="292">rom-setup + prove</text>
+
+  <!-- Step 4: Prove -->
+  <g class="step">
+    <rect class="box" x="110" y="312" width="200" height="50"/>
+    <text class="label" x="210" y="331">Prove</text>
+    <text class="sublabel" x="210" y="348">generate execution trace</text>
+  </g>
+
+  <!-- Arrow 5 -->
+  <line class="arrow" x1="210" y1="362" x2="210" y2="418" marker-end="url(#arrowhead)"/>
+  <text class="edge-label" x="222" y="392">VADCOP STARK</text>
+
+  <!-- Step 5: Proof -->
+  <g class="step">
+    <rect class="box-highlight" x="110" y="420" width="200" height="50"/>
+    <text class="label" x="210" y="439" style="fill: #8d8;">Proof</text>
+    <text class="sublabel" x="210" y="456" style="fill: #7a7;">vadcop_final_proof.bin</text>
+  </g>
+
+  <!-- Public values branch from Proof -->
+  <line class="arrow" x1="310" y1="445" x2="370" y2="445" stroke-dasharray="4,3"/>
+  <text class="edge-label" x="325" y="433" style="font-size: 11px;">public values</text>
+
+  <!-- Arrow 6 -->
+  <line class="arrow" x1="210" y1="470" x2="210" y2="510" marker-end="url(#arrowhead)"/>
+  <text class="edge-label" x="222" y="492">cargo-zisk verify</text>
+
+  <!-- Step 6: Verify -->
+  <g class="step">
+    <rect class="box" x="110" y="512" width="200" height="50"/>
+    <text class="label" x="210" y="531">Verify</text>
+    <text class="sublabel" x="210" y="548">fast, no re-execution</text>
+  </g>
+</svg>
