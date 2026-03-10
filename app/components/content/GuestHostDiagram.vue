@@ -152,7 +152,7 @@
   --hover-verify-stroke: #888;
   --hover-guest-stroke: #6c6;
   --hover-guest-shadow: rgba(68,170,136,0.4);
-  max-width: 620px;
+  max-width: 480px;
   margin: 1.5rem auto;
 }
 .gh-diagram svg { overflow: visible; }

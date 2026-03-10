@@ -92,7 +92,7 @@
   --hover-code-shadow: rgba(85,136,187,0.3);
   --hover-data-stroke: #6c6;
   --hover-data-shadow: rgba(68,170,136,0.3);
-  max-width: 580px;
+  max-width: 380px;
   margin: 1.5rem auto;
 }
 .hf-diagram svg { overflow: visible; }

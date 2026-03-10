@@ -129,7 +129,7 @@
   --hover-blue: #77aadd;
   --hover-green: #6c6;
 
-  max-width: 620px;
+  max-width: 480px;
   margin: 1.5rem auto;
 }
 .pf-diagram svg { overflow: visible; }

@@ -106,7 +106,7 @@
   --hover-coord-shadow: rgba(100,100,100,0.25);
   --hover-worker-stroke: #77aadd;
   --hover-worker-shadow: rgba(85,136,187,0.3);
-  max-width: 620px;
+  max-width: 480px;
   margin: 1.5rem auto;
 }
 .dp-diagram svg { overflow: visible; }

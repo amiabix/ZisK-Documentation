@@ -116,7 +116,7 @@
   --hover-process-shadow: rgba(85,136,187,0.3);
   --hover-client-stroke: #6c6;
   --hover-client-shadow: rgba(68,170,136,0.3);
-  max-width: 620px;
+  max-width: 480px;
   margin: 1.5rem auto;
 }
 .pc-diagram svg { overflow: visible; }

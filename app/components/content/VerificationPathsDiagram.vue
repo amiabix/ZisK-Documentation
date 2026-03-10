@@ -96,7 +96,7 @@
   --hover-result-stroke: #6c6;
   --hover-result-shadow: rgba(68,170,136,0.3);
 
-  max-width: 620px;
+  max-width: 480px;
   margin: 1.5rem auto;
 }
 .vp-diagram svg { overflow: visible; }
