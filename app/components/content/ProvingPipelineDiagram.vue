@@ -116,7 +116,7 @@
   --hover-top-stroke: #888;
   --hover-final-stroke: #6c6;
 
-  max-width: 480px;
+  max-width: 600px;
   margin: 1.5rem auto;
 }
 .pp-diagram svg { overflow: visible; }

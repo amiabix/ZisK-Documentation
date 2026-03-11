@@ -96,7 +96,7 @@
   --hover-shadow-blue: rgba(85,136,187,0.3);
   --hover-shadow-green: rgba(68,170,136,0.4);
 
-  max-width: 480px;
+  max-width: 600px;
   margin: 1.5rem auto;
 }
 .cp-diagram svg { overflow: visible; }

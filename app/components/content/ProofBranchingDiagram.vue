@@ -131,7 +131,7 @@
   --hover-output-compressed-shadow: rgba(68,170,136,0.4);
   --hover-output-plonk-stroke: #888;
 
-  max-width: 480px;
+  max-width: 600px;
   margin: 1.5rem auto;
 }
 .pb-diagram svg { overflow: visible; }

@@ -100,7 +100,7 @@
   --hover-output-stroke: #6c6;
   --hover-output-shadow: rgba(68,170,136,0.4);
 
-  max-width: 480px;
+  max-width: 600px;
   margin: 1.5rem auto;
 }
 .snark-pipeline-diagram svg { overflow: visible; }
