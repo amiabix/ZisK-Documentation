@@ -1,62 +1,56 @@
 <template>
   <div class="cp-diagram">
-    <svg width="100%" viewBox="0 0 660 200">
+    <svg width="100%" viewBox="0 0 600 200">
 
-      <!-- Input box: VADCOP Final proof -->
+      <!-- Input: VADCOP Final -->
       <g class="step input-step">
-        <rect class="box input" x="10" y="50" width="110" height="44" rx="4" ry="4"/>
-        <text class="label input-text" x="65" y="70">VADCOP Final proof</text>
-        <text class="sublabel input-sub" x="65" y="84">Goldilocks STARK</text>
+        <rect class="box input" x="10" y="48" width="110" height="52" rx="4" ry="4"/>
+        <text class="label input-text" x="65" y="70">VADCOP Final</text>
+        <text class="sub input-sub" x="65" y="86">Goldilocks STARK</text>
       </g>
 
-      <!-- Arrow: input → processing region -->
-      <line class="arrow" x1="120" y1="72" x2="152" y2="72" marker-end="url(#cp-a)"/>
+      <line class="arrow" x1="120" y1="74" x2="148" y2="74" marker-end="url(#cp-a)"/>
 
-      <!-- Processing region (dashed outer rect) -->
-      <rect class="region" x="155" y="10" width="310" height="140" rx="8" ry="8"/>
+      <!-- Processing region (dashed) -->
+      <rect class="region" x="150" y="8" width="280" height="152" rx="8" ry="8"/>
+      <text class="region-title" x="290" y="26">setup_vadcop_final_compressed</text>
 
-      <!-- Region title -->
-      <text class="region-title" x="310" y="28">setup_vadcop_final_compressed</text>
-
-      <!-- Internal step 1: Circom verifier circuit -->
+      <!-- Step 1 -->
       <g class="step internal-step">
-        <rect class="box internal" x="175" y="38" width="270" height="28" rx="3" ry="3"/>
-        <text class="label internal-text" x="310" y="52">Circom verifier circuit</text>
-        <text class="sublabel internal-sub" x="310" y="62">verifies VADCOP Final STARK</text>
+        <rect class="box internal" x="168" y="34" width="244" height="30" rx="3" ry="3"/>
+        <text class="label internal-text" x="290" y="54">Verify VADCOP Final proof</text>
       </g>
 
-      <!-- Arrow down: step 1 → step 2 -->
-      <line class="arrow" x1="310" y1="66" x2="310" y2="76" marker-end="url(#cp-a)"/>
+      <line class="arrow" x1="290" y1="64" x2="290" y2="74" marker-end="url(#cp-a)"/>
 
-      <!-- Internal step 2: Generate witness -->
+      <!-- Step 2 -->
       <g class="step internal-step">
-        <rect class="box internal" x="225" y="78" width="170" height="24" rx="3" ry="3"/>
-        <text class="label internal-text" x="310" y="94">Generate witness</text>
+        <rect class="box internal" x="200" y="76" width="180" height="30" rx="3" ry="3"/>
+        <text class="label internal-text" x="290" y="96">Generate witness</text>
       </g>
 
-      <!-- Arrow down: step 2 → step 3 -->
-      <line class="arrow" x1="310" y1="102" x2="310" y2="112" marker-end="url(#cp-a)"/>
+      <line class="arrow" x1="290" y1="106" x2="290" y2="116" marker-end="url(#cp-a)"/>
 
-      <!-- Internal step 3: STARK prover -->
+      <!-- Step 3 -->
       <g class="step internal-step">
-        <rect class="box internal" x="195" y="114" width="230" height="28" rx="3" ry="3"/>
-        <text class="label internal-text" x="310" y="128">STARK prover</text>
-        <text class="sublabel internal-sub" x="310" y="138">compressed starkinfo.json params</text>
+        <rect class="box internal" x="178" y="118" width="224" height="30" rx="3" ry="3"/>
+        <text class="label internal-text" x="290" y="138">STARK prover (smaller params)</text>
       </g>
 
-      <!-- Arrow: processing region → output -->
-      <line class="arrow output-arrow" x1="465" y1="72" x2="498" y2="72" marker-end="url(#cp-a-green)"/>
+      <!-- Arrow: region → output -->
+      <line class="arrow green-arrow" x1="430" y1="74" x2="458" y2="74" marker-end="url(#cp-a-green)"/>
 
-      <!-- Output box: Compressed proof -->
+      <!-- Output -->
       <g class="step output-step">
-        <rect class="box output" x="500" y="46" width="148" height="52" rx="4" ry="4"/>
-        <text class="label output-text" x="574" y="68">Compressed proof</text>
-        <text class="sublabel output-sub" x="574" y="82">Goldilocks FRI, smaller size</text>
+        <rect class="box output" x="460" y="42" width="130" height="64" rx="4" ry="4"/>
+        <text class="label output-text" x="525" y="66">Compressed proof</text>
+        <text class="sub output-sub" x="525" y="82">Goldilocks FRI</text>
+        <text class="sub output-sub" x="525" y="94">smaller size</text>
       </g>
 
-      <!-- Annotation below processing region -->
-      <text class="annotation" x="310" y="168">The compressed circuit is simpler than the original —</text>
-      <text class="annotation" x="310" y="179">it's a single verifier, not 35 state machines</text>
+      <!-- Annotation -->
+      <text class="annotation" x="290" y="180">The verifier circuit has fewer constraints than the original</text>
+      <text class="annotation" x="290" y="194">execution trace, so smaller STARK params can be used</text>
 
       <defs>
         <marker id="cp-a" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
@@ -75,14 +69,13 @@
   --input-fill: #1a1f28;
   --input-stroke: #3a5577;
   --input-text: #99bbdd;
-  --input-sub: #8899aa;
+  --input-sub: #667788;
   --region-fill: #0d1117;
   --region-stroke: #3a5577;
   --region-title-color: #99bbdd;
   --internal-fill: #1e2230;
   --internal-stroke: #3a5577;
   --internal-text: #8899aa;
-  --internal-sub: #667788;
   --output-fill: #142814;
   --output-stroke: #4a8;
   --output-text: #8d8;
@@ -112,9 +105,14 @@
 .internal { fill: var(--internal-fill); stroke: var(--internal-stroke); stroke-width: 1px; }
 .output { fill: var(--output-fill); stroke: var(--output-stroke); }
 
+.step { cursor: pointer; }
+.input-step:hover .input { stroke: var(--hover-input-stroke); filter: drop-shadow(0 0 5px var(--hover-shadow-blue)); }
+.internal-step:hover .internal { stroke: var(--hover-internal-stroke); filter: drop-shadow(0 0 5px var(--hover-shadow-blue)); }
+.output-step:hover .output { stroke: var(--hover-output-stroke); filter: drop-shadow(0 0 8px var(--hover-shadow-green)); }
+
 .label {
   font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-anchor: middle;
 }
@@ -122,13 +120,12 @@
 .internal-text { fill: var(--internal-text); color: var(--internal-text); -webkit-text-fill-color: var(--internal-text); }
 .output-text { fill: var(--output-text); color: var(--output-text); -webkit-text-fill-color: var(--output-text); }
 
-.sublabel {
-  font-family: 'IBM Plex Mono', 'Menlo', 'Monaco', monospace;
-  font-size: 8px;
+.sub {
+  font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 10px;
   text-anchor: middle;
 }
 .input-sub { fill: var(--input-sub); color: var(--input-sub); -webkit-text-fill-color: var(--input-sub); }
-.internal-sub { fill: var(--internal-sub); color: var(--internal-sub); -webkit-text-fill-color: var(--internal-sub); }
 .output-sub { fill: var(--output-sub); color: var(--output-sub); -webkit-text-fill-color: var(--output-sub); }
 
 .region-title {
@@ -136,7 +133,7 @@
   color: var(--region-title-color);
   -webkit-text-fill-color: var(--region-title-color);
   font-family: 'IBM Plex Mono', 'Menlo', 'Monaco', monospace;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   text-anchor: middle;
 }
@@ -146,25 +143,19 @@
   color: var(--annotation-color);
   -webkit-text-fill-color: var(--annotation-color);
   font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 8px;
+  font-size: 10px;
   font-style: italic;
   text-anchor: middle;
 }
 
 .arrow { stroke: var(--arrow-color); stroke-width: 1.5px; fill: none; }
-.output-arrow { stroke: var(--arrow-green); }
-
-.step { cursor: pointer; }
-.input-step:hover .input { stroke: var(--hover-input-stroke); filter: drop-shadow(0 0 5px var(--hover-shadow-blue)); }
-.internal-step:hover .internal { stroke: var(--hover-internal-stroke); filter: drop-shadow(0 0 5px var(--hover-shadow-blue)); }
-.output-step:hover .output { stroke: var(--hover-output-stroke); filter: drop-shadow(0 0 8px var(--hover-shadow-green)); }
+.green-arrow { stroke: var(--arrow-green); }
 
 .marker-arrow { fill: var(--arrow-color); }
 .marker-green { fill: var(--arrow-green); }
 </style>
 
 <style>
-/* Light mode */
 html:not(.dark) .cp-diagram {
   --input-fill: #f7f9fc;
   --input-stroke: #4477aa;
@@ -176,7 +167,6 @@ html:not(.dark) .cp-diagram {
   --internal-fill: #f7f9fc;
   --internal-stroke: #4477aa;
   --internal-text: #111;
-  --internal-sub: #444;
   --output-fill: #f7fcf7;
   --output-stroke: #2a7a4a;
   --output-text: #111;
